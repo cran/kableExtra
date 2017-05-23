@@ -58,8 +58,8 @@ kable_styling <- function(kable_input,
   kable_format <- attr(kable_input, "format")
 
   if (!kable_format %in% c("html", "latex")) {
-    stop("Please specify output format in your kable function. Currently ",
-         "generic markdown table using pandoc is not supported.")
+      message("Currently generic markdown table using pandoc is not supported.")
+      return(kable_input)
   }
   if (kable_format == "html") {
     if (is.null(full_width)) {
@@ -122,6 +122,10 @@ htmlTable_styling <- function(kable_input,
   if (!is.null(font_size)) {
     kable_xml_style <- c(kable_xml_style,
                          paste0("font-size: ", font_size, "px;"))
+    kable_caption_node <- xml_tpart(kable_xml, "caption")
+    if (!is.null(kable_caption_node)) {
+      xml_attr(kable_caption_node, "style") <- "font-size: initial !important;"
+    }
   }
   if (!full_width) {
     kable_xml_style <- c(kable_xml_style, "width: auto !important;")
@@ -222,7 +226,7 @@ styling_latex_scale_down <- function(x, table_info) {
     return(x)
   }
   x <- sub(table_info$begin_tabular,
-           paste0("\\\\resizebox\\{\\\\textwidth\\}\\{\\!\\}\\{",
+           paste0("\\\\resizebox\\{\\\\linewidth\\}\\{\\!\\}\\{",
                   table_info$begin_tabular),
            x)
   sub(table_info$end_tabular, paste0(table_info$end_tabular, "\\}"), x)

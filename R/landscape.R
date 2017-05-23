@@ -1,0 +1,41 @@
+#' Print the table on an isolated landscape page in PDF
+#'
+#' @description This function will put the table on an single landscape page.
+#' It's useful for wide tables that cann't be printed on a portrait page.
+#'
+#' @param kable_input Output of `knitr::kable()` with `format` specified
+#' @param margin Customizable page margin for special needs. Values can be
+#' "1cm", "1in" or similar.
+#'
+#' @export
+landscape <- function(kable_input, margin = NULL) {
+  kable_format <- attr(kable_input, "format")
+  if (!kable_format %in% c("html", "latex")) {
+    message("Currently generic markdown table using pandoc is not supported.")
+    return(kable_input)
+  }
+  if (kable_format == "html") {
+    return(kable_input)
+  }
+  if (kable_format == "latex") {
+    return(landscape_latex(kable_input, margin))
+  }
+}
+
+landscape_latex <- function(kable_input, margin) {
+  kable_attrs <- attributes(kable_input)
+  usepackage_latex("pdflscape")
+  out <- paste0(
+    "\n\\begin{landscape}", kable_input, "\n\\end{landscape}"
+  )
+
+  if (!is.null(margin)) {
+    out <- paste0(
+      "\n\\newgeometry{margin=", margin, "}", out, "\n\\restoregeometry"
+    )
+  }
+  out <- structure(out, format = "latex", class = "knitr_kable")
+  attributes(out) <- kable_attrs
+  attr(out, "landscape") <- TRUE
+  return(out)
+}

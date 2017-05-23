@@ -78,3 +78,19 @@ kable(dt, caption = "Demo Table[note]") %>%
                  "Group 2 contains hp, drat and wt"), 
                notation = "symbol")
 
+## ------------------------------------------------------------------------
+kable(mtcars[1:10, 1:6], format = "html", caption = "Group Rows") %>%
+  kable_styling("striped", full_width = F) %>%
+  group_rows("Group 1", 4, 7) %>%
+  group_rows("Group 2", 8, 10)
+
+## ------------------------------------------------------------------------
+kable(dt, format = "html") %>%
+  kable_styling("striped", full_width = F) %>%
+  group_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
+
+## ------------------------------------------------------------------------
+kable(dt, format = "html") %>%
+  kable_styling("striped", full_width = F) %>%
+  add_indent(c(1, 3, 5))
+
