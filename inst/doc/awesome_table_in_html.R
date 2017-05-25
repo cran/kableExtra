@@ -79,18 +79,33 @@ kable(dt, caption = "Demo Table[note]") %>%
                notation = "symbol")
 
 ## ------------------------------------------------------------------------
-kable(mtcars[1:10, 1:6], format = "html", caption = "Group Rows") %>%
+kable(mtcars[1:10, 1:6], caption = "Group Rows") %>%
   kable_styling("striped", full_width = F) %>%
   group_rows("Group 1", 4, 7) %>%
   group_rows("Group 2", 8, 10)
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "html") %>%
+kable(dt) %>%
   kable_styling("striped", full_width = F) %>%
   group_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "html") %>%
+kable(dt) %>%
   kable_styling("striped", full_width = F) %>%
   add_indent(c(1, 3, 5))
+
+## ------------------------------------------------------------------------
+text_tbl <- data.frame(
+  Items = c("Item 1", "Item 2", "Item 3"),
+  Features = c(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vehicula tempor ex. Morbi malesuada sagittis turpis, at venenatis nisl luctus a. ",
+    "In eu urna at magna luctus rhoncus quis in nisl. Fusce in velit varius, posuere risus et, cursus augue. Duis eleifend aliquam ante, a aliquet ex tincidunt in. ", 
+    "Vivamus venenatis egestas eros ut tempus. Vivamus id est nisi. Aliquam molestie erat et sollicitudin venenatis. In ac lacus at velit scelerisque mattis. "
+  )
+)
+
+kable(text_tbl) %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  column_spec(2, width = "30em")
 
