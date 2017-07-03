@@ -11,7 +11,7 @@
 
 <meta name="author" content="Hao Zhu" />
 
-<meta name="date" content="2017-05-24" />
+<meta name="date" content="2017-07-03" />
 
 <title>Create Awesome HTML Table with knitr::kable and kableExtra</title>
 
@@ -217,7 +217,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Create Awesome HTML Table with knitr::kable and kableExtra</h1>
 <h4 class="author"><em>Hao Zhu</em></h4>
-<h4 class="date"><em>2017-05-24</em></h4>
+<h4 class="date"><em>2017-07-03</em></h4>
 
 </div>
 
@@ -1603,14 +1603,20 @@ Hornet Sportabout
 <thead>
 <tr>
 <th style="border-bottom:hidden"></th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 1
+</div>
 </th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 2
+</div>
 </th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 3
+</div>
 </th>
 </tr>
 <tr>
@@ -1765,29 +1771,41 @@ Hornet Sportabout
 <thead>
 <tr>
 <th style="border-bottom:hidden"></th>
-<th style="text-align:center;" colspan="6">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="6">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 6
+</div>
 </th>
 </tr>
 <tr>
 <th style="border-bottom:hidden"></th>
-<th style="text-align:center;" colspan="4">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="4">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 4
+</div>
 </th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 5
+</div>
 </th>
 </tr>
 <tr>
 <th style="border-bottom:hidden"></th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 1
+</div>
 </th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 2
+</div>
 </th>
-<th style="text-align:center;" colspan="2">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 3
+</div>
 </th>
 </tr>
 <tr>
@@ -2447,11 +2465,15 @@ Demo Table<sup>*</sup>
 <thead>
 <tr>
 <th style="border-bottom:hidden"></th>
-<th style="text-align:center;" colspan="3">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 1<sup>†</sup>
+</div>
 </th>
-<th style="text-align:center;" colspan="3">
+<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
+<div style="border-bottom: 1px solid #ddd;padding-bottom: 5px;">
 Group 2<sup>‡</sup>
+</div>
 </th>
 </tr>
 <tr>
@@ -3205,6 +3227,7 @@ Hornet Sportabout
 <div id="column-style-specification" class="section level1">
 <h1>Column Style Specification</h1>
 <p>When you have a table with lots of explanatory texts, you may want to specified the column width for different column, since the auto adjust in HTML may not work in its best way while basic LaTeX table is really bad at handling text wrapping. Also, sometimes, you may want to highlight a column (e.g. a “Total” column) by making it bold. In these scenario, you can use <code>column_spec()</code>. You can find an example below.</p>
+<p>Warning: If you have a super long table, you should be cautious when you use <code>column_spec</code> as the xml node modification takes time.</p>
 <pre class="r"><code>text_tbl &lt;- data.frame(
   Items = c(&quot;Item 1&quot;, &quot;Item 2&quot;, &quot;Item 3&quot;),
   Features = c(
@@ -3253,6 +3276,331 @@ Item 3
 </td>
 <td style="text-align:left;width: 30em; ">
 Vivamus venenatis egestas eros ut tempus. Vivamus id est nisi. Aliquam molestie erat et sollicitudin venenatis. In ac lacus at velit scelerisque mattis.
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>The following features are introduced in <code>kableExtra</code> 0.3.0</p>
+</div>
+<div id="row-style-specification" class="section level1">
+<h1>Row Style Specification</h1>
+<p>Similar with <code>column_spec</code>, you can define specifications for rows. Currently, you can either bold or italiciz an entire row. Note that, similar with other row-related functions in <code>kableExtra</code>, for the position of the target row, you don’t need to count in header rows or the group labelling rows.</p>
+<pre class="r"><code>kable(dt) %&gt;%
+  kable_styling(&quot;striped&quot;, full_width = F) %&gt;%
+  column_spec(7, bold = T) %&gt;%
+  row_spec(5, bold = T)</code></pre>
+<?xml version="1.0" encoding="UTF-8" ?>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+mpg
+</th>
+<th style="text-align:right;">
+cyl
+</th>
+<th style="text-align:right;">
+disp
+</th>
+<th style="text-align:right;">
+hp
+</th>
+<th style="text-align:right;">
+drat
+</th>
+<th style="text-align:right;">
+wt
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Mazda RX4
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.90
+</td>
+<td style="text-align:right;font-weight: bold;">
+2.620
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mazda RX4 Wag
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.90
+</td>
+<td style="text-align:right;font-weight: bold;">
+2.875
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Datsun 710
+</td>
+<td style="text-align:right;">
+22.8
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+93
+</td>
+<td style="text-align:right;">
+3.85
+</td>
+<td style="text-align:right;font-weight: bold;">
+2.320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hornet 4 Drive
+</td>
+<td style="text-align:right;">
+21.4
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+258
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.08
+</td>
+<td style="text-align:right;font-weight: bold;">
+3.215
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Hornet Sportabout
+</td>
+<td style="text-align:right;font-weight: bold;">
+18.7
+</td>
+<td style="text-align:right;font-weight: bold;">
+8
+</td>
+<td style="text-align:right;font-weight: bold;">
+360
+</td>
+<td style="text-align:right;font-weight: bold;">
+175
+</td>
+<td style="text-align:right;font-weight: bold;">
+3.15
+</td>
+<td style="text-align:right;font-weight: bold;font-weight: bold;">
+3.440
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="collapse-rows-in-selected-columns" class="section level1">
+<h1>Collapse Rows in Selected Columns</h1>
+<p>Function <code>group_rows</code> is great for showing simple structural information on rows but sometimes people may need to show structural information with multiple layers. When it happens, you may consider to use <code>collapse_rows</code> instead, which will put repeating cells in columns into multi-row cells.</p>
+<pre class="r"><code>collapse_rows_dt &lt;- data.frame(C1 = c(rep(&quot;a&quot;, 10), rep(&quot;b&quot;, 5)),
+                 C2 = c(rep(&quot;c&quot;, 7), rep(&quot;d&quot;, 3), rep(&quot;c&quot;, 2), rep(&quot;d&quot;, 3)),
+                 C3 = 1:15,
+                 C4 = sample(c(0,1), 15, replace = TRUE))
+kable(collapse_rows_dt, &quot;html&quot;, align = &quot;c&quot;) %&gt;%
+  kable_styling(full_width = F) %&gt;%
+  column_spec(1, bold=T) %&gt;%
+  collapse_rows(columns = 1:2)</code></pre>
+<?xml version="1.0" encoding="UTF-8" ?>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+C1
+</th>
+<th style="text-align:center;">
+C2
+</th>
+<th style="text-align:center;">
+C3
+</th>
+<th style="text-align:center;">
+C4
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;font-weight: bold;vertical-align: middle !important;" rowspan="10">
+a
+</td>
+<td style="text-align:center;vertical-align: middle !important;" rowspan="7">
+c
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;vertical-align: middle !important;" rowspan="3">
+d
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+9
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+10
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;vertical-align: middle !important;" rowspan="5">
+b
+</td>
+<td style="text-align:center;vertical-align: middle !important;" rowspan="2">
+c
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+12
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;vertical-align: middle !important;" rowspan="3">
+d
+</td>
+<td style="text-align:center;">
+13
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+15
+</td>
+<td style="text-align:center;">
+0
 </td>
 </tr>
 </tbody>

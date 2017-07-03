@@ -12,14 +12,16 @@
 #' `bordered`, `hover`, `condensed` and `responsive`.
 #' @param latex_options A character vector for LaTeX table options. Please see
 #' package vignette for more information. Possible options include
-#' `basic`, `striped`, `hold_position`, `scale_down`. `striped` will add
-#' alternative row colors to the table. It will imports `LaTeX` package `xcolor`
-#' if enabled. `hold_position` will "hold" the floating table to the exact
-#' position. It is useful when the `LaTeX` table is contained in a `table`
-#' environment after you specified captions in `kable()`. It will force the
-#' table to stay in the position where it was created in the document.
+#' `basic`, `striped`, `hold_position`, `scale_down` & `repeat_header`.
+#' `striped` will add alternative row colors to the table. It will imports
+#' `LaTeX` package `xcolor` if enabled. `hold_position` will "hold" the floating
+#' table to the exact position. It is useful when the `LaTeX` table is contained
+#'  in a `table` environment after you specified captions in `kable()`. It will
+#'  force the table to stay in the position where it was created in the document.
 #' `scale_down` is useful for super wide table. It will automatically adjust
-#' the table to page width.
+#' the table to page width. `repeat_header` in only meaningful in a longtable
+#' environment. It will let the header row repeat on every page in that long
+#' table.
 #' @param full_width A `TRUE` or `FALSE` variable controlling whether the HTML
 #' table should have 100\% width. Since HTML and pdf have different flavors on
 #' the preferable format for `full_width`. If not specified, a HTML table will
@@ -31,6 +33,7 @@
 #' a `LaTeX` table, if `float_*` is selected, `LaTeX` package `wrapfig` will be
 #' imported.
 #' @param font_size A numeric input for table font size
+#' @param ... extra options for HTML or LaTeX
 #'
 #' @examples x_html <- knitr::kable(head(mtcars), "html")
 #' kable_styling(x_html, "striped", position = "left", font_size = 7)
@@ -44,7 +47,8 @@ kable_styling <- function(kable_input,
                           latex_options = "basic",
                           full_width = NULL,
                           position = "center",
-                          font_size = NULL) {
+                          font_size = NULL,
+                          ...) {
 
   if (length(bootstrap_options) == 1 && bootstrap_options == "basic") {
     bootstrap_options <- getOption("kable_styling_bootstrap_options", "basic")
@@ -75,7 +79,7 @@ kable_styling <- function(kable_input,
                              bootstrap_options = bootstrap_options,
                              full_width = full_width,
                              position = position,
-                             font_size = font_size))
+                             font_size = font_size, ...))
   }
   if (kable_format == "latex") {
     if (is.null(full_width)) {
@@ -85,7 +89,7 @@ kable_styling <- function(kable_input,
                             latex_options = latex_options,
                             full_width = full_width,
                             position = position,
-                            font_size = font_size))
+                            font_size = font_size, ...))
   }
 }
 
@@ -96,7 +100,7 @@ htmlTable_styling <- function(kable_input,
                               position = c("center", "left", "right",
                                            "float_left", "float_right"),
                               font_size = NULL) {
-  table_info <- magic_mirror(kable_input)
+  kable_attrs <- attributes(kable_input)
   kable_xml <- read_xml(as.character(kable_input), options = c("COMPACT"))
 
   # Modify class
@@ -154,7 +158,7 @@ htmlTable_styling <- function(kable_input,
 
   out <- structure(as.character(kable_xml), format = "html",
                    class = "knitr_kable")
-  attr(out, "original_kable_meta") <- table_info
+  attributes(out) <- kable_attrs
   return(out)
 }
 
@@ -164,11 +168,12 @@ pdfTable_styling <- function(kable_input,
                              full_width = F,
                              position = c("center", "left", "right",
                                           "float_left", "float_right"),
-                             font_size = NULL) {
+                             font_size = NULL,
+                             repeat_header_text = "\\textit{(continued)}") {
 
   latex_options <- match.arg(
     latex_options,
-    c("basic", "striped", "hold_position", "scale_down"),
+    c("basic", "striped", "hold_position", "scale_down", "repeat_header"),
     several.ok = T
   )
 
@@ -177,7 +182,7 @@ pdfTable_styling <- function(kable_input,
   table_info <- magic_mirror(kable_input)
 
   if ("striped" %in% latex_options) {
-    out <- styling_latex_striped(out)
+    out <- styling_latex_striped(out, table_info)
   }
 
   # hold_position is only meaningful in a table environment
@@ -187,6 +192,10 @@ pdfTable_styling <- function(kable_input,
 
   if ("scale_down" %in% latex_options) {
     out <- styling_latex_scale_down(out, table_info)
+  }
+
+  if ("repeat_header" %in% latex_options & table_info$tabular == "longtable") {
+    out <- styling_latex_repeat_header(out, table_info, repeat_header_text)
   }
 
   if (full_width) {
@@ -201,15 +210,18 @@ pdfTable_styling <- function(kable_input,
   out <- styling_latex_position(out, table_info, position, latex_options)
 
   out <- structure(out, format = "latex", class = "knitr_kable")
-  attr(out, "original_kable_meta") <- table_info
+  attr(out, "kable_meta") <- table_info
   return(out)
 }
 
-styling_latex_striped <- function(x) {
-  usepackage_latex("xcolor", "table")
-  paste0(
-    # gray!6 is the same as shadecolor ({RGB}{248, 248, 248}) in pdf_document
-    "\\rowcolors{2}{gray!6}{white}\n", x, "\n\\rowcolors{2}{white}{white}")
+styling_latex_striped <- function(x, table_info) {
+  # gray!6 is the same as shadecolor ({RGB}{248, 248, 248}) in pdf_document
+  if (table_info$tabular == "longtable" & !is.na(table_info$caption)) {
+    row_color <- "\\rowcolors{2}{white}{gray!6}\n"
+  } else {
+    row_color <- "\\rowcolors{2}{gray!6}{white}\n"
+  }
+  return(paste0(row_color, x, "\n\\rowcolors{2}{white}{white}"))
 }
 
 styling_latex_hold_position <- function(x) {
@@ -228,6 +240,40 @@ styling_latex_scale_down <- function(x, table_info) {
                   table_info$begin_tabular),
            x)
   sub(table_info$end_tabular, paste0(table_info$end_tabular, "\\}"), x)
+}
+
+styling_latex_repeat_header <- function(x, table_info, repeat_header_text) {
+  x <- read_lines(x)
+  if (table_info$booktabs) {
+    header_rows_start <- which(x == "\\toprule")[1]
+    header_rows_end <- which(x == "\\midrule")[1]
+  } else {
+    header_rows_start <- which(x == "\\hline")[1]
+    header_rows_end <- which(x == "\\hline")[2]
+  }
+
+  if (is.na(table_info$caption)) {
+    continue_line <- paste0(
+      "\\multicolumn{", table_info$ncol, "}{@{}l}{", repeat_header_text,
+      "}\\\\"
+    )
+  } else {
+    continue_line <- paste0(
+      "\\caption{", table_info$caption, " ", repeat_header_text,
+      "}\\\\"
+    )
+  }
+
+  x <- c(
+    x[1:header_rows_end],
+    "\\endfirsthead",
+    continue_line,
+    x[header_rows_start:header_rows_end],
+    "\\endhead",
+    x[(header_rows_end + 1):length(x)]
+  )
+  x <- paste0(x, collapse = "\n")
+  return(x)
 }
 
 styling_latex_full_width <- function(x, table_info) {
@@ -281,7 +327,6 @@ styling_latex_position_float <- function(x, table_info, option) {
     if (option == "l") return(styling_latex_position_left(x, table_info))
     if (option == "r") return(styling_latex_position_right(x, table_info, F))
   }
-  usepackage_latex("wrapfig")
   size_matrix <- sapply(sapply(table_info$contents, str_split, " & "), nchar)
   col_max_length <- apply(size_matrix, 1, max) + 4
   if (table_info$table_env) {

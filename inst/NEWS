@@ -1,3 +1,27 @@
+kableExtra 0.3.0
+--------------------------------------------------------------------------------
+* Improved the look of HTML grouped header row (again) by adding spaces between
+groups
+
+* Fixed a bug in grouped header row.
+
+* Fixed a bug in grouped rows: https://stackoverflow.com/questions/44360040/group-rows-function-in-kableextra-package-not-grouping-rows
+
+* Fixed a bug in grouped rows with ()[].
+
+* Added a new LaTeX option `repeat_header` in `kable_styling` for repeating
+header rows in a longtable environment.
+
+* Fixed a bug in add_header_above to allow special symbol in extra header rows.
+
+* Allow column_spec automatically align when width is specified.
+
+* Added bold/italic options to add_header_above.
+
+* Added `collapse_rows` to collapse repeated rows to multirow cell
+
+* Improve package-level documentation based on @wibeasley's suggestion
+
 kableExtra 0.2.1
 --------------------------------------------------------------------------------
 
@@ -6,6 +30,7 @@ kableExtra 0.2.1
 * Improved the look of HTML grouped header row.
 
 * Fixed an error in a documentation.
+
 
 kableExtra 0.2.0
 --------------------------------------------------------------------------------

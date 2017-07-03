@@ -109,3 +109,19 @@ kable(text_tbl) %>%
   column_spec(1, bold = T) %>%
   column_spec(2, width = "30em")
 
+## ------------------------------------------------------------------------
+kable(dt) %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(7, bold = T) %>%
+  row_spec(5, bold = T)
+
+## ------------------------------------------------------------------------
+collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
+                 C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
+                 C3 = 1:15,
+                 C4 = sample(c(0,1), 15, replace = TRUE))
+kable(collapse_rows_dt, "html", align = "c") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold=T) %>%
+  collapse_rows(columns = 1:2)
+

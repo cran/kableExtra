@@ -12,8 +12,8 @@ magic_mirror <- function(kable_input){
     warning("magic_mirror may not be able to produce correct result if the",
             " input table is not rendered by knitr::kable. ")
   }
-  if ("original_kable_meta" %in% names(attributes(kable_input))) {
-    return(attr(kable_input, "original_kable_meta"))
+  if ("kable_meta" %in% names(attributes(kable_input))) {
+    return(attr(kable_input, "kable_meta"))
   }
   kable_format <- attr(kable_input, "format")
   if (kable_format == "latex") {
@@ -44,6 +44,7 @@ magic_mirror_latex <- function(kable_input){
     kable_input, paste0("\\\\begin\\{",
                         kable_info$tabular,"\\}.*\\{(.*?)\\}"))[2])
   kable_info$align_vector <- unlist(strsplit(kable_info$align, ""))
+  kable_info$align_vector_origin <- kable_info$align_vector
   # valign
   kable_info$valign <- gsub("\\|", "", str_match(
     kable_input, paste0("\\\\begin\\{", kable_info$tabular,"\\}(.*)\\{.*?\\}"))[2])
@@ -58,6 +59,7 @@ magic_mirror_latex <- function(kable_input){
   kable_info$ncol <- nchar(kable_info$align)
   # Caption
   kable_info$caption <- str_match(kable_input, "caption\\{(.*?)\\n")[2]
+  kable_info$caption <- str_sub(kable_info$caption, 1, -4)
   # N of rows
   kable_info$nrow <- str_count(kable_input, "\\\\\n") -
     # in the dev version (currently as of 11.2015) of knitr, when longtable is
@@ -70,6 +72,7 @@ magic_mirror_latex <- function(kable_input){
     )
   # Contents
   kable_info$contents <- str_match_all(kable_input, "\n(.*)\\\\\\\\")[[1]][,2]
+  kable_info$contents <- regex_escape(kable_info$contents, T)
   if (kable_info$tabular == "longtable" & !is.na(kable_info$caption)) {
     kable_info$contents <- kable_info$contents[-1]
   }
