@@ -33,7 +33,7 @@ collapse_rows <- function(kable_input, columns = NULL) {
 
 collapse_rows_html <- function(kable_input, columns) {
   kable_attrs <- attributes(kable_input)
-  kable_xml <- read_xml(as.character(kable_input), options = "COMPACT")
+  kable_xml <- read_kable_as_xml(kable_input)
   kable_tbody <- xml_tpart(kable_xml, "tbody")
 
   kable_dt <- rvest::html_table(xml2::read_html(as.character(kable_input)))[[1]]
@@ -64,8 +64,7 @@ collapse_rows_html <- function(kable_input, columns) {
     }
   }
 
-  out <- structure(as.character(kable_xml), format = "html",
-                   class = "knitr_kable")
+  out <- as_kable_xml(kable_xml)
   attributes(out) <- kable_attrs
   return(out)
 }
@@ -127,7 +126,7 @@ collapse_rows_latex <- function(kable_input, columns) {
     }
     out <- sub(contents[i + 1], new_contents[i], out)
   }
-  out <- sub("\\\\addlinespace\n", "", out)
+  out <- gsub("\\\\addlinespace\n", "", out)
 
   out <- structure(out, format = "latex", class = "knitr_kable")
   table_info$collapse_rows <- TRUE

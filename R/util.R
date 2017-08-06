@@ -8,14 +8,6 @@
 
 rmd_format <- function(){
   rmd_output_metadata <- metadata$output
-  # rmd_fmt <- ifelse(
-  #   is.null(rmd_output_metadata),
-  #   "markdown", ifelse(
-  #   rmd_output_metadata %in% c("html_document", "rmarkdown::html_vignette"),
-  #   "html",ifelse(
-  #     rmd_output_metadata %in% c("pdf_document", "rmarkdown::tufte_handout"),
-  #     "latex", "markdown"
-  #   )))
   return(names(rmd_output_metadata))
 }
 
@@ -71,3 +63,16 @@ regex_escape <- function(x, double_backslash = FALSE) {
   return(x)
 }
 
+as_kable_xml <- function(x) {
+  # tmp <- tempfile(fileext = ".xml")
+  # write_xml(x, tmp, options = c("no_declaration", "format_whitespace", "as_html"))
+  # out <- read_file(tmp)
+  # out <- structure(out, format = "html", class = "knitr_kable")
+  out <- structure(as.character(x), format = "html", class = "knitr_kable")
+  return(out)
+}
+
+read_kable_as_xml <- function(x) {
+  kable_html <- read_html(as.character(x))
+  xml_child(xml_child(kable_html, 1), 1)
+}

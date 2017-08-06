@@ -27,6 +27,10 @@
 #' - Only have to mess with raw HTML/LaTeX in the last 10% cases where
 #' `kableExtra` cannot solve the problem
 #'
+#' For a full package documentation, please visit the
+#' [package documentation site](http://haozhu233.github.io/kableExtra/)
+#' for more information
+#'
 #' @section Features:
 #' **Pipable syntax:** `kableExtra` is NOT a table generating package. It is a
 #' package that can "add features" to a `kable` output using a syntax
@@ -55,13 +59,13 @@
 #' str_extract str_replace_all str_trim str_extract_all str_sub
 #' @importFrom xml2 read_xml xml_attr xml_has_attr xml_attr<- read_html
 #' xml_child xml_children xml_name xml_add_sibling xml_add_child xml_text
-#' xml_remove xml_text<-
+#' xml_remove write_xml xml_text<-
 #' @importFrom rvest html_table
 #' @importFrom knitr knit_meta_add
 #' @importFrom rmarkdown latex_dependency
 #' @importFrom magrittr %>%
 #' @importFrom utils read.csv
-#' @importFrom readr read_lines
+#' @importFrom readr read_lines read_file
 #' @name kableExtra-package
 #' @aliases kableExtra
 #' @docType package

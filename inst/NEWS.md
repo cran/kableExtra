@@ -1,3 +1,34 @@
+kableExtra 0.4.0
+--------------------------------------------------------------------------------
+* Add scroll_box for HTML table for extremely long/wide tables
+
+* Fixed a bug in collapse_row on removing addlinespace
+
+* Removed addlinespace from group_rows
+
+* Added monospace to column_spec & row_spec
+
+* Lowered R version requirement to R 3.1.0
+
+* Added testthat (#28, thank you @wibeasley)
+
+* For all HTML table functions, changed reading method from `xml2::read_xml` to
+`xml2::read_html` plus some extra steps to avoid errors when HTML contents
+don't fulfill XHTML requirements (#24)
+
+* For all HTML table functions, improved exportation method to remove the XML
+declaration. (Stackoverflow: https://stackoverflow.com/questions/45262308/knit2wp-adds-text-with-kableextra)
+
+* Added `repeat_header_method` in kable_styling (#25)
+
+* Fixed a bug in `position` in `kable_styling()` (https://stackoverflow.com/questions/45378664/kableextra-rmarkdown-tables-aligning-grouping-row-labels-and-footnotes)
+
+* Improved striped line look on tables with multiple layers of header rows. (#31)
+
+* Added escape to `add_header_above` and `group_rows`
+
+* Added PDF vignette to the CRAN vignette folder
+
 kableExtra 0.3.0
 --------------------------------------------------------------------------------
 * Improved the look of HTML grouped header row (again) by adding spaces between

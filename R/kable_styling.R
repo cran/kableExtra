@@ -33,7 +33,10 @@
 #' a `LaTeX` table, if `float_*` is selected, `LaTeX` package `wrapfig` will be
 #' imported.
 #' @param font_size A numeric input for table font size
-#' @param ... extra options for HTML or LaTeX
+#' @param ... extra options for HTML or LaTeX. For LaTeX, extra options includes
+#' `repeat_header_method` and `repeat_header_text`. `repeat_header_method` can
+#' either be `append`(default) or `replace` while `repeat_header_text` is just a
+#' text string you want to append on or replace the caption.
 #'
 #' @examples x_html <- knitr::kable(head(mtcars), "html")
 #' kable_styling(x_html, "striped", position = "left", font_size = 7)
@@ -101,7 +104,7 @@ htmlTable_styling <- function(kable_input,
                                            "float_left", "float_right"),
                               font_size = NULL) {
   kable_attrs <- attributes(kable_input)
-  kable_xml <- read_xml(as.character(kable_input), options = c("COMPACT"))
+  kable_xml <- read_kable_as_xml(kable_input)
 
   # Modify class
   bootstrap_options <- match.arg(
@@ -145,7 +148,7 @@ htmlTable_styling <- function(kable_input,
   position_style <- switch(
     position,
     center = "margin-left: auto; margin-right: auto;",
-    left = "text-align: right;",
+    left = "",
     right = "margin-right: 0; margin-left: auto",
     float_left = "float: left; margin-right: 10px;",
     float_right = "float: right; margin-left: 10px;"
@@ -156,8 +159,7 @@ htmlTable_styling <- function(kable_input,
     xml_attr(kable_xml, "style") <- paste(kable_xml_style, collapse = " ")
   }
 
-  out <- structure(as.character(kable_xml), format = "html",
-                   class = "knitr_kable")
+  out <- as_kable_xml(kable_xml)
   attributes(out) <- kable_attrs
   return(out)
 }
@@ -169,13 +171,16 @@ pdfTable_styling <- function(kable_input,
                              position = c("center", "left", "right",
                                           "float_left", "float_right"),
                              font_size = NULL,
-                             repeat_header_text = "\\textit{(continued)}") {
+                             repeat_header_text = "\\textit{(continued)}",
+                             repeat_header_method = c("append", "replace")) {
 
   latex_options <- match.arg(
     latex_options,
     c("basic", "striped", "hold_position", "scale_down", "repeat_header"),
     several.ok = T
   )
+
+  repeat_header_method <- match.arg(repeat_header_method)
 
   out <- NULL
   out <- as.character(kable_input)
@@ -195,7 +200,8 @@ pdfTable_styling <- function(kable_input,
   }
 
   if ("repeat_header" %in% latex_options & table_info$tabular == "longtable") {
-    out <- styling_latex_repeat_header(out, table_info, repeat_header_text)
+    out <- styling_latex_repeat_header(out, table_info, repeat_header_text,
+                                       repeat_header_method)
   }
 
   if (full_width) {
@@ -217,11 +223,31 @@ pdfTable_styling <- function(kable_input,
 styling_latex_striped <- function(x, table_info) {
   # gray!6 is the same as shadecolor ({RGB}{248, 248, 248}) in pdf_document
   if (table_info$tabular == "longtable" & !is.na(table_info$caption)) {
-    row_color <- "\\rowcolors{2}{white}{gray!6}\n"
+    row_color <- "\\rowcolors{2}{white}{gray!6}"
   } else {
-    row_color <- "\\rowcolors{2}{gray!6}{white}\n"
+    row_color <- "\\rowcolors{2}{gray!6}{white}"
   }
-  return(paste0(row_color, x, "\n\\rowcolors{2}{white}{white}"))
+
+  x <- read_lines(x)
+  if (table_info$booktabs) {
+    header_rows_start <- which(x == "\\toprule")[1]
+    header_rows_end <- which(x == "\\midrule")[1]
+  } else {
+    header_rows_start <- which(x == "\\hline")[1]
+    header_rows_end <- which(x == "\\hline")[2]
+  }
+
+  x <- c(
+    row_color,
+    x[1:(header_rows_start - 1)],
+    "\\hiderowcolors",
+    x[header_rows_start:header_rows_end],
+    "\\showrowcolors",
+    x[(header_rows_end + 1):length(x)],
+    "\\rowcolors{2}{white}{white}"
+  )
+  x <- paste0(x, collapse = "\n")
+  return(x)
 }
 
 styling_latex_hold_position <- function(x) {
@@ -242,7 +268,8 @@ styling_latex_scale_down <- function(x, table_info) {
   sub(table_info$end_tabular, paste0(table_info$end_tabular, "\\}"), x)
 }
 
-styling_latex_repeat_header <- function(x, table_info, repeat_header_text) {
+styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
+                                        repeat_header_method) {
   x <- read_lines(x)
   if (table_info$booktabs) {
     header_rows_start <- which(x == "\\toprule")[1]
@@ -258,18 +285,21 @@ styling_latex_repeat_header <- function(x, table_info, repeat_header_text) {
       "}\\\\"
     )
   } else {
-    continue_line <- paste0(
-      "\\caption{", table_info$caption, " ", repeat_header_text,
-      "}\\\\"
-    )
+    if (repeat_header_method == "append") {
+      caption_without_lab <- sub("\\\\label\\{[^\\}]*\\}", "", table_info$caption)
+      repeat_header_text <- paste(caption_without_lab, repeat_header_text)
+    }
+    continue_line <- paste0("\\caption[]{", repeat_header_text, "}\\\\")
   }
 
+  x <- x[x != "\\bottomrule"]
   x <- c(
     x[1:header_rows_end],
     "\\endfirsthead",
     continue_line,
     x[header_rows_start:header_rows_end],
     "\\endhead",
+    "\\bottomrule\\endlastfoot",
     x[(header_rows_end + 1):length(x)]
   )
   x <- paste0(x, collapse = "\n")
@@ -358,3 +388,5 @@ styling_latex_font_size <- function(x, table_info, font_size) {
     "\\endgroup"
   ))
 }
+
+
