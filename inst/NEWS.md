@@ -1,3 +1,44 @@
+kableExtra 0.5.0 (a big LaTeX update)
+--------------------------------------------------------------------------------
+* Now column_spec & row_spec can customize font & cell background color with 
+2 new options `color` & `background`. Also, you can draw border lines using 
+`border_left` or `border_right` when you are using `column_spec`.
+
+* Making it optional to pre-load LaTeX package on package startup
+
+* Adding documentations about dependencies on LaTeX packages and the auto-load 
+behavior of kableExtra
+
+* Improved the look of full_width in kable_styling LaTeX and add tabu to LaTeX
+dependency
+
+* Added enc2utf8() to improve behavior in non-UTF8 machines. 
+
+* Added HOLD_position, which uses LaTeX package `float` and H, for a stronger 
+hold on table position. (Thanks @robshep)
+
+* Move conditional usepackage_latex() calls to zzz.R for more consistant 
+behavior
+
+* Now you can change strip color for LaTeX tables. 
+
+* Added support to tables with caption.short. 
+
+* Added kable_as_image() for LaTeX tables. This function will render the LaTeX
+code snippet to a piece of standalone PDF file and then convert that to an 
+image, which will then be included in the rmarkdown document, if the 
+environment exists. It's useful for people who have a strong need of 
+generating Word documents and producing well-formatted LaTeX table at the same
+time.
+
+* For both HTML & LaTeX, added escape option for add_footnote
+
+* Fixed a bug in LaTeX for the processing of the + sign
+
+* Fixed a bug with the [ symbol in escape_regex
+
+
+
 kableExtra 0.4.0
 --------------------------------------------------------------------------------
 * Add scroll_box for HTML table for extremely long/wide tables

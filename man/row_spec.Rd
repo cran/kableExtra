@@ -5,7 +5,7 @@
 \title{Specify the look of the selected row}
 \usage{
 row_spec(kable_input, row, bold = FALSE, italic = FALSE,
-  monospace = FALSE)
+  monospace = FALSE, color = NULL, background = NULL)
 }
 \arguments{
 \item{kable_input}{Output of \code{knitr::kable()} with \code{format} specified}
@@ -21,6 +21,12 @@ need to be emphasized.}
 
 \item{monospace}{A T/F value to control whether the text of the selected column
 need to be monospaced (verbatim)}
+
+\item{color}{A character string for column text color. Here please pay
+attention to the differences in color codes between HTML and LaTeX.}
+
+\item{background}{A character string for column background color. Here please
+pay attention to the differences in color codes between HTML and LaTeX.}
 }
 \description{
 This function allows users to select a row and then specify

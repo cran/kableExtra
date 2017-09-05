@@ -19,12 +19,13 @@ for more information. Possible options include \code{basic}, \code{striped},
 
 \item{latex_options}{A character vector for LaTeX table options. Please see
 package vignette for more information. Possible options include
-\code{basic}, \code{striped}, \code{hold_position}, \code{scale_down} & \code{repeat_header}.
+\code{basic}, \code{striped}, \code{hold_position}, \code{HOLD_position}, \code{scale_down} & \code{repeat_header}.
 \code{striped} will add alternative row colors to the table. It will imports
 \code{LaTeX} package \code{xcolor} if enabled. \code{hold_position} will "hold" the floating
 table to the exact position. It is useful when the \code{LaTeX} table is contained
 in a \code{table} environment after you specified captions in \code{kable()}. It will
 force the table to stay in the position where it was created in the document.
+A stronger version: \code{HOLD_position} requires the \code{float} package and specifies \code{[H]}.
 \code{scale_down} is useful for super wide table. It will automatically adjust
 the table to page width. \code{repeat_header} in only meaningful in a longtable
 environment. It will let the header row repeat on every page in that long
@@ -44,15 +45,24 @@ imported.}
 
 \item{font_size}{A numeric input for table font size}
 
-\item{...}{extra options for HTML or LaTeX. For LaTeX, extra options includes
-\code{repeat_header_method} and \code{repeat_header_text}. \code{repeat_header_method} can
-either be \code{append}(default) or \code{replace} while \code{repeat_header_text} is just a
-text string you want to append on or replace the caption.}
+\item{...}{extra options for HTML or LaTeX. See \code{details}.}
 }
 \description{
 This function provides a cleaner approach to modify the style
 of HTML tables other than using the \code{table.attr} option in \code{knitr::kable()}.
 Currenly, it assumes the HTML document has boot
+}
+\details{
+For LaTeX, extra options includes:
+\itemize{
+\item \code{repeat_header_method} can either be \code{append}(default) or \code{replace}
+\item \code{repeat_header_text} is just a text string you want to append on or
+replace the caption.
+\item \code{stripe_color} allows users to pick a different color for their strip lines.
+\item \code{latex_table_env} character string to define customized table environment
+such as tabu or tabularx.You shouldn't expect all features could be
+supported in self-defined environments.
+}
 }
 \examples{
 x_html <- knitr::kable(head(mtcars), "html")
