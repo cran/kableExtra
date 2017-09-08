@@ -1,7 +1,7 @@
 Package: kableExtra
 Type: Package
 Title: Construct Complex Table with 'kable' and Pipe Syntax
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(
     person('Hao', 'Zhu', email = 'haozhu233@gmail.com', role = c('aut', 'cre')),
     person('Timothy', 'Tsai', role = 'ctb'),
@@ -32,7 +32,7 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-09-05 02:52:01 UTC; haozhu
+Packaged: 2017-09-07 21:54:59 UTC; haozhu
 Author: Hao Zhu [aut, cre],
   Timothy Tsai [ctb],
   Thomas Travison [ctb],
@@ -44,4 +44,4 @@ Author: Hao Zhu [aut, cre],
   Yoni Sidi [ctb]
 Maintainer: Hao Zhu <haozhu233@gmail.com>
 Repository: CRAN
-Date/Publication: 2017-09-05 07:24:47 UTC
+Date/Publication: 2017-09-08 14:56:53 UTC

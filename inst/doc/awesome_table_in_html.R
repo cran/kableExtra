@@ -54,14 +54,14 @@ text_tbl <- data.frame(
 
 kable(text_tbl) %>%
   kable_styling(full_width = F) %>%
-  column_spec(1, bold = T) %>%
-  column_spec(2, width = "30em")
+  column_spec(1, bold = T, border_right = T) %>%
+  column_spec(2, width = "30em", background = "yellow")
 
 ## ------------------------------------------------------------------------
 kable(dt) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(7, bold = T) %>%
-  row_spec(5, bold = T)
+  row_spec(5, bold = T, color = "white", background = "#D7261E")
 
 ## ------------------------------------------------------------------------
 kable(dt) %>%

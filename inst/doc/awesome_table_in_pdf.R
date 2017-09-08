@@ -70,14 +70,14 @@ text_tbl <- data.frame(
 
 kable(text_tbl, format = "latex", booktabs = T) %>%
   kable_styling(full_width = F) %>%
-  column_spec(1, bold = T) %>%
+  column_spec(1, bold = T, color = "red") %>%
   column_spec(2, width = "30em")
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
   kable_styling("striped", full_width = F) %>%
-  column_spec(7, bold = T) %>%
-  row_spec(5, bold = T)
+  column_spec(7, border_left = T, bold = T) %>%
+  row_spec(5, bold = T, color = "white", background = "black")
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
