@@ -44,7 +44,8 @@ kable(long_dt, format = "latex", longtable = T, booktabs = T, caption = "Longtab
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
-  kable_styling(full_width = T)
+  kable_styling(full_width = T) %>%
+  column_spec(1, width = "8cm")
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
@@ -77,7 +78,7 @@ kable(text_tbl, format = "latex", booktabs = T) %>%
 kable(dt, format = "latex", booktabs = T) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(7, border_left = T, bold = T) %>%
-  row_spec(5, bold = T, color = "white", background = "black")
+  row_spec(3:5, bold = T, color = "white", background = "black")
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
@@ -100,6 +101,12 @@ kable(mtcars[1:10, 1:6], format = "latex", caption = "Group Rows", booktabs = T)
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
   group_rows("Group 1", 4, 5, latex_gap_space = "2em")
+
+## ---- eval=FALSE---------------------------------------------------------
+#  kable(mtcars[1:10, 1:6], format = "latex", caption = "Group Rows", booktabs = T) %>%
+#    kable_styling() %>%
+#    group_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
+#  # Not evaluated. The code above should have the same result as the first example in this section.
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
@@ -153,4 +160,17 @@ kable(dt, format = "latex", caption = "Demo Table (Landscape)[note]", booktabs =
                notation = "symbol") %>%
   group_rows("Group 1", 4, 5) %>%
   landscape()
+
+## ---- eval = F-----------------------------------------------------------
+#  # Not evaluated.
+#  
+#  # The code below will automatically include the image in the rmarkdown document
+#  kable(dt, "latex", booktabs = T) %>%
+#    column_spec(1, bold = T) %>%
+#    kable_as_image()
+#  
+#  # If you want to save the image locally, just provide a name
+#  kable(dt, "latex", booktabs = T) %>%
+#    column_spec(1, bold = T) %>%
+#    kable_as_image("my_latex_table")
 

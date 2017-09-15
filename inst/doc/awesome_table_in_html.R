@@ -8,38 +8,39 @@ options(knitr.table.format = "html")
 ## If you don't define format here, you'll need put `format = "html"` in every kable function.
 
 ## ------------------------------------------------------------------------
-kable(dt)
+kable(dt, "html")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+dt %>%
+  kable("html") %>%
   kable_styling()
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "float_right")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(bootstrap_options = "striped", font_size = 7)
 
 ## ------------------------------------------------------------------------
@@ -52,42 +53,48 @@ text_tbl <- data.frame(
   )
 )
 
-kable(text_tbl) %>%
+kable(text_tbl, "html") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, bold = T, border_right = T) %>%
   column_spec(2, width = "30em", background = "yellow")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped", full_width = F) %>%
-  column_spec(7, bold = T) %>%
-  row_spec(5, bold = T, color = "white", background = "#D7261E")
+  column_spec(5:7, bold = T) %>%
+  row_spec(3:5, bold = T, color = "white", background = "#D7261E")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped") %>%
   add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling(c("striped", "bordered")) %>%
   add_header_above(c(" ", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2)) %>%
   add_header_above(c(" ", "Group 4" = 4, "Group 5" = 2)) %>%
   add_header_above(c(" ", "Group 6" = 6))
 
 ## ------------------------------------------------------------------------
-kable(mtcars[1:10, 1:6], caption = "Group Rows") %>%
+kable(mtcars[1:10, 1:6], "html", caption = "Group Rows") %>%
   kable_styling("striped", full_width = F) %>%
   group_rows("Group 1", 4, 7) %>%
   group_rows("Group 2", 8, 10)
 
+## ---- eval = F-----------------------------------------------------------
+#  # Not evaluated. This example generates the same table as above.
+#  kable(mtcars[1:10, 1:6], "html", caption = "Group Rows") %>%
+#    kable_styling("striped", full_width = F) %>%
+#    group_rows(index = c(" " = 3, "Group 1" = 4, "Group 2" = 3))
+
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped", full_width = F) %>%
   group_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped", full_width = F) %>%
   add_indent(c(1, 3, 5))
 
@@ -102,22 +109,22 @@ kable(collapse_rows_dt, "html", align = "c") %>%
   collapse_rows(columns = 1:2)
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped") %>%
   add_footnote(c("Footnote 1", "Have a good day."), notation = "alphabet")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped") %>%
   add_footnote(c("Footnote 1", "Have a good day."), notation = "number")
 
 ## ------------------------------------------------------------------------
-kable(dt) %>%
+kable(dt, "html") %>%
   kable_styling("striped") %>%
   add_footnote(c("Footnote 1", "Footnote 2", "Footnote 3"), notation = "symbol")
 
 ## ------------------------------------------------------------------------
-kable(dt, caption = "Demo Table[note]") %>%
+kable(dt, "html", caption = "Demo Table[note]") %>%
   kable_styling("striped") %>%
   add_header_above(c(" ", "Group 1[note]" = 3, "Group 2[note]" = 3)) %>%
   add_footnote(c("This table is from mtcars", 
@@ -126,7 +133,7 @@ kable(dt, caption = "Demo Table[note]") %>%
                notation = "symbol")
 
 ## ------------------------------------------------------------------------
-kable(cbind(mtcars, mtcars)) %>%
+kable(cbind(mtcars, mtcars), "html") %>%
   kable_styling() %>%
   scroll_box(width = "500px", height = "200px")
 

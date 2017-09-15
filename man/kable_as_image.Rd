@@ -5,7 +5,7 @@
 \title{Convert a LaTeX table to an image and place it in a rmarkdown document}
 \usage{
 kable_as_image(kable_input, filename = NULL, file_format = "png",
-  latex_header_includes = NULL, keep_pdf = FALSE)
+  latex_header_includes = NULL, keep_pdf = FALSE, density = 300)
 }
 \arguments{
 \item{kable_input}{Raw LaTeX code to generate a table. It doesn't have to
@@ -24,6 +24,9 @@ Each element is a row. You can have things like
 
 \item{keep_pdf}{A T/F option to control if the mid-way standalone pdf should
 be kept. Default is \code{FALSE}.}
+
+\item{density}{Resolution to read the PDF file. Default value is 300, which
+should be sufficient in most cases.}
 }
 \description{
 This is a LaTeX-only function. This function will render the
@@ -36,6 +39,10 @@ edits to the tables in Word.
 
 Also, if a filename is provided, user has the option to "save" the table to
 an image file like \code{ggplot2::ggsave()}.
+
+Note that, if you are using this function on a Windows computer, you need
+to install Ghostscript before you can use this feature. It is essential for
+magick to read PDFs on Windows. Website for Ghostscript: https://ghostscript.com/
 
 The idea of this function was coming from \href{https://stackoverflow.com/questions/44711313/save-rmarkdowns-report-tables-and-figures-to-file}{this StackOverflow question}.
 The approach was learned and adopted from the \href{https://github.com/metrumresearchgroup/texPreview}{texpreview}

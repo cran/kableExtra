@@ -5,9 +5,7 @@
 #' bold text and italic text.
 #'
 #' @param kable_input Output of `knitr::kable()` with `format` specified
-#' @param column A numeric value indicating which column to be selected. When
-#' you do the counting, ignore the extra header columns you added through
-#' add_header_left.
+#' @param column A numeric value or vector indicating which column(s) to be selected.
 #' @param width A character string telling HTML & LaTeX how wide the column
 #' needs to be, e.g. "10cm", "3in" or "30em".
 #' @param bold A T/F value to control whether the text of the selected column
@@ -28,7 +26,7 @@
 #' in a character string for the CSS of the border line
 #'
 #' @examples x <- knitr::kable(head(mtcars), "html")
-#' column_spec(x, 1, width = "20em", bold = TRUE, italic = TRUE)
+#' column_spec(x, 1:2, width = "20em", bold = TRUE, italic = TRUE)
 #'
 #' @export
 column_spec <- function(kable_input, column,
@@ -36,7 +34,7 @@ column_spec <- function(kable_input, column,
                         monospace = FALSE, color = NULL, background = NULL,
                         border_left = FALSE, border_right = FALSE) {
   if (!is.numeric(column)) {
-    stop("column must be a numeric value")
+    stop("column must be numeric. ")
   }
   kable_format <- attr(kable_input, "format")
   if (!kable_format %in% c("html", "latex")) {
@@ -66,15 +64,7 @@ column_spec_html <- function(kable_input, column, width,
   kable_tbody <- xml_tpart(kable_xml, "tbody")
 
   group_header_rows <- attr(kable_input, "group_header_rows")
-  if (is.null(kable_attrs$column_adjust)) {
-    all_contents_rows <- seq(1, length(xml_children(kable_tbody)))
-    all_contents_array <- rep(column, length(all_contents_rows))
-  } else {
-    column <- column + kable_attrs$column_adjust$count
-    all_contents_array <- colSums(kable_attrs$column_adjust$matrix[1:column, ])
-    all_contents_rows <- which(all_contents_array != 0 &
-                                 kable_attrs$column_adjust$matrix[column, ])
-  }
+  all_contents_rows <- seq(1, length(xml_children(kable_tbody)))
 
   if (!is.null(group_header_rows)) {
     all_contents_rows <- all_contents_rows[!all_contents_rows %in%
@@ -94,39 +84,41 @@ column_spec_html <- function(kable_input, column, width,
   }
 
   for (i in all_contents_rows) {
-    target_cell <- xml_child(xml_child(kable_tbody, i), all_contents_array[i])
-    if (!is.null(width)) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "width: ", width, "; ")
-    }
-    if (bold) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "font-weight: bold;")
-    }
-    if (italic) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "font-style: italic;")
-    }
-    if (monospace) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "font-family: monospace;")
-    }
-    if (!is.null(color)) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "color: ", color, ";")
-    }
-    if (!is.null(background)) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "background-color: ",
-                                               background, ";")
-    }
-    if (border_left) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "border-left:", border_l_css, ";")
-    }
-    if (border_right) {
-      xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                               "border-right:", border_r_css, ";")
+    for (j in column) {
+      target_cell <- xml_child(xml_child(kable_tbody, i), j)
+      if (!is.null(width)) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "width: ", width, "; ")
+      }
+      if (bold) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "font-weight: bold;")
+      }
+      if (italic) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "font-style: italic;")
+      }
+      if (monospace) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "font-family: monospace;")
+      }
+      if (!is.null(color)) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "color: ", color, ";")
+      }
+      if (!is.null(background)) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "background-color: ",
+                                                 background, ";")
+      }
+      if (border_left) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "border-left:", border_l_css, ";")
+      }
+      if (border_right) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "border-right:", border_r_css, ";")
+      }
     }
   }
   out <- as_kable_xml(kable_xml)
@@ -146,9 +138,14 @@ column_spec_latex <- function(kable_input, column, width,
   align_collapse <- ifelse(table_info$booktabs, "", "\\|")
   kable_align_old <- paste(table_info$align_vector, collapse = align_collapse)
 
-  table_info$align_vector[column] <- latex_column_align_builder(
-    table_info$align_vector_origin[column], width, bold, italic, monospace,
-    color, background, border_left, border_right)
+  table_info$align_vector[column] <- unlist(lapply(
+    table_info$align_vector_origin[column],
+    function(x) {
+      latex_column_align_builder(
+        x, width, bold, italic, monospace,
+        color, background, border_left, border_right)
+    }
+  ))
 
   kable_align_new <- paste(table_info$align_vector, collapse = align_collapse)
 
@@ -160,7 +157,9 @@ column_spec_latex <- function(kable_input, column, width,
     if (is.null(table_info$column_width)) {
       table_info$column_width <- list()
     }
-    table_info$column_width[[paste0("column_", column)]] <- width
+    for (i in column) {
+      table_info$column_width[[paste0("column_", i)]] <- width
+    }
   }
   attr(out, "kable_meta") <- table_info
   return(out)
@@ -182,7 +181,7 @@ latex_column_align_builder <- function(x, width, bold, italic, monospace,
     color <- sprintf("\\\\color{%s}", color)
   }
 
-  if (!is.null(color)) {
+  if (!is.null(background)) {
     background <- sprintf("\\\\columncolor{%s}", background)
   }
 
