@@ -2,8 +2,7 @@
 #'
 #' @description Tables with multiple rows of header rows are extremely useful
 #' to demonstrate grouped data. This function takes the output of a `kable()`
-#' function and adds an header row on top of it. This function can work with
-#' both `HTML` and `LaTeX` outputs
+#' function and adds an header row on top of it.
 #'
 #' @param kable_input Output of `knitr::kable()` with `format` specified
 #' @param header A (named) character vector with `colspan` as values. For
@@ -123,9 +122,9 @@ pdfTable_add_header_above <- function(kable_input, header,
   new_header_split <- pdfTable_new_header_generator(header, table_info$booktabs,
                                                     bold, italic, monospace)
   new_header <- paste0(new_header_split[1], "\n", new_header_split[2])
-  out <- sub(hline_type,
-             paste0(hline_type, "\n", new_header),
-             enc2utf8(as.character(kable_input)))
+  out <- str_replace(enc2utf8(as.character(kable_input)),
+                     hline_type,
+                     paste0(hline_type, "\n", new_header))
   out <- structure(out, format = "latex", class = "knitr_kable")
   # new_header_row <- latex_contents_escape(new_header_split[1])
   if (is.null(table_info$new_header_row)) {

@@ -56,7 +56,7 @@
 #' load related LaTeX packages manually.
 #'
 #' @importFrom stringr str_count str_split str_match str_detect str_match_all
-#' str_extract str_replace_all str_trim str_extract_all str_sub
+#' str_extract str_replace_all str_trim str_extract_all str_sub str_replace
 #' @importFrom xml2 read_xml xml_attr xml_has_attr xml_attr<- read_html
 #' xml_child xml_children xml_name xml_add_sibling xml_add_child xml_text
 #' xml_remove write_xml xml_text<-
@@ -65,7 +65,11 @@
 #' @importFrom rmarkdown latex_dependency
 #' @importFrom magrittr %>%
 #' @importFrom utils read.csv
-#' @importFrom readr read_lines read_file write_file
+#' @importFrom readr read_lines read_file
+#' @importFrom scales rescale
+#' @importFrom viridisLite viridis
+#' @importFrom stats ave
+#' @importFrom grDevices col2rgb
 #' @name kableExtra-package
 #' @aliases kableExtra
 #' @docType package

@@ -1,8 +1,9 @@
 #' HTML table attributes
 #'
 #' @description This function provides a cleaner approach to modify the style
-#' of HTML tables other than using the `table.attr` option in `knitr::kable()`.
-#' Currenly, it assumes the HTML document has boot
+#' of HTML tables other than using the `table.attr` option in `knitr::kable()`. Note
+#' that those bootstrap options requires Twitter bootstrap theme, which is not avaiable
+#' in some customized template being loaded.
 #'
 #' @param kable_input Output of `knitr::kable()` with `format` specified
 #' @param bootstrap_options A character vector for bootstrap table options.
@@ -180,6 +181,7 @@ pdfTable_styling <- function(kable_input,
                              font_size = NULL,
                              repeat_header_text = "\\textit{(continued)}",
                              repeat_header_method = c("append", "replace"),
+                             repeat_header_continued = FALSE,
                              stripe_color = "gray!6",
                              latex_table_env = NULL) {
 
@@ -215,7 +217,7 @@ pdfTable_styling <- function(kable_input,
 
   if ("repeat_header" %in% latex_options & table_info$tabular == "longtable") {
     out <- styling_latex_repeat_header(out, table_info, repeat_header_text,
-                                       repeat_header_method)
+                                       repeat_header_method, repeat_header_continued)
   }
 
   if (full_width) {
@@ -300,7 +302,8 @@ styling_latex_scale_down <- function(x, table_info) {
 }
 
 styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
-                                        repeat_header_method) {
+                                        repeat_header_method,
+                                        repeat_header_continued) {
   x <- read_lines(x)
   if (table_info$booktabs) {
     header_rows_start <- which(x == "\\toprule")[1]
@@ -323,15 +326,39 @@ styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
     continue_line <- paste0("\\caption[]{", repeat_header_text, "}\\\\")
   }
 
-  index_bottomrule <- which(x == "\\bottomrule")
-  x <- x[-index_bottomrule]
-  x[index_bottomrule - 1] <- paste0(x[index_bottomrule - 1], "*\\bottomrule")
+  if (!table_info$booktabs) {
+    bottom_part <- NULL
+  } else {
+    index_bottomrule <- which(x == "\\bottomrule")
+    x <- x[-index_bottomrule]
+    x[index_bottomrule - 1] <- paste0(x[index_bottomrule - 1], "*")
+
+    if (repeat_header_continued == FALSE) {
+      bottom_part <- "\\\n\\endfoot\n\\bottomrule\n\\endlastfoot"
+    } else {
+      if (repeat_header_continued == TRUE) {
+        bottom_text <- "\\textit{(continued \\ldots)}"
+      } else {
+        bottom_text <- repeat_header_continued
+      }
+      bottom_part <- paste0(
+        "\\midrule\n",
+        "\\multicolumn{", table_info$ncol, "}{r@{}}{", bottom_text, "}\\\n",
+        "\\endfoot\n",
+        "\\bottomrule\n",
+        "\\endlastfoot"
+      )
+    }
+  }
+
+  # x[index_bottomrule - 1] <- paste0(x[index_bottomrule - 1], "*\\bottomrule")
   x <- c(
     x[1:header_rows_end],
     "\\endfirsthead",
     continue_line,
     x[header_rows_start:header_rows_end],
     "\\endhead",
+    bottom_part,
     x[(header_rows_end + 1):length(x)]
   )
   x <- paste0(x, collapse = "\n")
@@ -354,7 +381,8 @@ styling_latex_full_width <- function(x, table_info) {
 }
 
 styling_latex_position <- function(x, table_info, position, latex_options) {
-  hold_position <- "hold_position" %in% latex_options
+  hold_position <- intersect(c("hold_position", "HOLD_position"), latex_options)
+  if (length(hold_position) == 0) hold_position <- ""
   switch(
     position,
     center = styling_latex_position_center(x, table_info, hold_position),
@@ -367,7 +395,12 @@ styling_latex_position <- function(x, table_info, position, latex_options) {
 
 styling_latex_position_center <- function(x, table_info, hold_position) {
   if (!table_info$table_env & table_info$tabular == "tabular") {
-    return(paste0("\\begin{table}[!h]\n\\centering", x, "\n\\end{table}"))
+    x <- paste0("\\begin{table}\n\\centering", x, "\n\\end{table}")
+    if (hold_position == "hold_position") {
+      x <- styling_latex_hold_position(x)
+    } else {
+      x <- styling_latex_HOLD_position(x)
+    }
   }
   return(x)
 }
@@ -419,7 +452,7 @@ styling_latex_font_size <- function(x, table_info, font_size) {
   # fontsize is good enough
   return(paste0(
     "\\begingroup\\fontsize{", font_size, "}{", row_height, "}\\selectfont\n", x,
-    "\\endgroup"
+    "\\endgroup{}"
   ))
 }
 

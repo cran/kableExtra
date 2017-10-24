@@ -1,8 +1,7 @@
 #' Specify the look of the selected column
 #'
 #' @description This function allows users to select a column and then specify
-#' its look. Right now it supports the following three properties: column width,
-#' bold text and italic text.
+#' its look.
 #'
 #' @param kable_input Output of `knitr::kable()` with `format` specified
 #' @param column A numeric value or vector indicating which column(s) to be selected.
@@ -88,7 +87,8 @@ column_spec_html <- function(kable_input, column, width,
       target_cell <- xml_child(xml_child(kable_tbody, i), j)
       if (!is.null(width)) {
         xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
-                                                 "width: ", width, "; ")
+                                                 "width: ", width,
+                                                 "; display: inline-block; ")
       }
       if (bold) {
         xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
@@ -178,7 +178,7 @@ latex_column_align_builder <- function(x, width, bold, italic, monospace,
   }
 
   if (!is.null(color)) {
-    color <- sprintf("\\\\color{%s}", color)
+    color <- paste0("\\\\color", latex_color(color))
   }
 
   if (!is.null(background)) {

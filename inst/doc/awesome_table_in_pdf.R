@@ -14,7 +14,9 @@ options(knitr.table.format = "latex")
 #  library(kableExtra)
 
 ## ------------------------------------------------------------------------
-kable(dt)
+# As I said, you don't need format = "latex" if you have defined 
+# knitr.table.format in options.
+kable(dt, format = "latex")
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T)
@@ -79,6 +81,50 @@ kable(dt, format = "latex", booktabs = T) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(7, border_left = T, bold = T) %>%
   row_spec(3:5, bold = T, color = "white", background = "black")
+
+## ------------------------------------------------------------------------
+kable(dt, format = "latex", booktabs = T, align = "c") %>%
+  kable_styling(latex_options = "striped", full_width = F) %>%
+  row_spec(0, angle = 45)
+
+## ---- message=FALSE, warning=FALSE---------------------------------------
+library(dplyr)
+mtcars[1:10, 1:2] %>%
+  mutate(
+    car = row.names(.),
+    # You don't need format = "latex" if you have ever defined options(knitr.table.format)
+    mpg = cell_spec(mpg, "latex", color = ifelse(mpg > 20, "red", "blue")),
+    cyl = cell_spec(cyl, "latex", color = "white", align = "c", angle = 45, 
+                    background = factor(cyl, c(4, 6, 8), 
+                                        c("#666666", "#999999", "#BBBBBB")))
+  ) %>%
+  select(car, mpg, cyl) %>%
+  kable("latex", escape = F, booktabs = T, linesep = "")
+
+## ------------------------------------------------------------------------
+iris[1:10, ] %>%
+  mutate_if(is.numeric, function(x) {
+    cell_spec(x, "latex", bold = T, color = spec_color(x, end = 0.9),
+              font_size = spec_font_size(x))
+  }) %>%
+  mutate(Species = cell_spec(
+    Species, "latex", color = "white", bold = T,
+    background = spec_color(1:10, end = 0.9, option = "A", direction = -1)
+  )) %>%
+  kable("latex", escape = F, booktabs = T, linesep = "", align = "c")
+
+## ------------------------------------------------------------------------
+sometext <- strsplit(paste0(
+  "You can even try to make some crazy things like this paragraph. ", 
+  "It may seem like a useless feature right now but it's so cool ",
+  "and nobody can resist. ;)"
+), " ")[[1]]
+text_formatted <- paste(
+  text_spec(sometext, "latex", color = spec_color(1:length(sometext), end = 0.9),
+            font_size = spec_font_size(1:length(sometext), begin = 5, end = 20)),
+  collapse = " ")
+
+# To display the text, type `r text_formatted` outside of the chunk
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%

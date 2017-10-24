@@ -61,6 +61,7 @@ regex_escape <- function(x, double_backslash = FALSE) {
   x <- gsub("\\}", "\\\\}", x)
   x <- gsub("\\*", "\\\\*", x)
   x <- gsub("\\+", "\\\\+", x)
+  x <- gsub("\\?", "\\\\?", x)
   return(x)
 }
 
@@ -110,3 +111,26 @@ latex_pkg_list <- function() {
     "\\usepackage{threeparttable}"
   ))
 }
+
+# Fix duplicated rows in LaTeX tables
+fix_duplicated_rows_latex <- function(kable_input, table_info) {
+  # Since sub/string_replace start from beginning, we count unique value from
+  # behind.
+  rev_contents <- rev(table_info$contents)
+  dup_index <- rev(ave(seq_along(rev_contents), rev_contents,
+                       FUN = seq_along))
+  for (i in which(dup_index != 1)) {
+    dup_row <- table_info$contents[i]
+    empty_times <- dup_index[i] - 1
+    new_row <- str_replace(
+      dup_row, "&",
+      paste0("&\\\\\\\\vphantom\\\\{", empty_times, "\\\\}"))
+    kable_input <- str_replace(kable_input, dup_row, new_row)
+    table_info$contents[i] <- new_row
+  }
+  table_info$duplicated_rows <- FALSE
+  return(list(kable_input, table_info))
+}
+
+
+

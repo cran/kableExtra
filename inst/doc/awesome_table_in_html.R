@@ -65,6 +65,86 @@ kable(dt, "html") %>%
   row_spec(3:5, bold = T, color = "white", background = "#D7261E")
 
 ## ------------------------------------------------------------------------
+kable(dt, format = "html") %>%
+  kable_styling("striped", full_width = F) %>%
+  row_spec(0, angle = -45)
+
+## ---- message=FALSE, warning=FALSE---------------------------------------
+library(dplyr)
+mtcars[1:10, 1:2] %>%
+  mutate(
+    car = row.names(.),
+    # You don't need format = "html" if you have ever defined options(knitr.table.format)
+    mpg = cell_spec(mpg, "html", color = ifelse(mpg > 20, "red", "blue")),
+    cyl = cell_spec(cyl, "html", color = "white", align = "c", angle = 45, 
+                    background = factor(cyl, c(4, 6, 8), 
+                                        c("#666666", "#999999", "#BBBBBB")))
+  ) %>%
+  select(car, mpg, cyl) %>%
+  kable("html", escape = F) %>%
+  kable_styling("striped", full_width = F)
+
+## ------------------------------------------------------------------------
+iris[1:10, ] %>%
+  mutate_if(is.numeric, function(x) {
+    cell_spec(x, "html", bold = T, color = spec_color(x, end = 0.9),
+              font_size = spec_font_size(x))
+  }) %>%
+  mutate(Species = cell_spec(
+    Species, "html", color = "white", bold = T,
+    background = spec_color(1:10, end = 0.9, option = "A", direction = -1)
+  )) %>%
+  kable("html", escape = F, align = "c") %>%
+  kable_styling("striped", full_width = F)
+
+## ------------------------------------------------------------------------
+sometext <- strsplit(paste0(
+  "You can even try to make some crazy things like this paragraph. ", 
+  "It may seem like a useless feature right now but it's so cool ",
+  "and nobody can resist. ;)"
+), " ")[[1]]
+text_formatted <- paste(
+  text_spec(sometext, "html", color = spec_color(1:length(sometext), end = 0.9),
+            font_size = spec_font_size(1:length(sometext), begin = 5, end = 20)),
+  collapse = " ")
+
+# To display the text, type `r text_formatted` outside of the chunk
+
+## ------------------------------------------------------------------------
+popover_dt <- data.frame(
+  position = c("top", "bottom", "right", "left"),
+  stringsAsFactors = FALSE
+)
+popover_dt$`Hover over these items` <- cell_spec(
+  paste("Message on", popover_dt$position), # Cell texts
+  popover = spec_popover(
+    content = popover_dt$position,
+    title = NULL,                           # title will add a Title Panel on top
+    position = popover_dt$position
+  ))
+kable(popover_dt, "html", escape = FALSE) %>%
+  kable_styling("striped", full_width = FALSE)
+
+## ---- message = FALSE, warning=FALSE-------------------------------------
+library(formattable)
+mtcars[1:5, 1:4] %>%
+  mutate(
+    car = row.names(.),
+    mpg = color_tile("white", "orange")(mpg),
+    cyl = cell_spec(cyl, "html", angle = (1:5)*60, 
+                    background = "red", color = "white", align = "center"),
+    disp = ifelse(disp > 200,
+                  cell_spec(disp, "html", color = "red", bold = T),
+                  cell_spec(disp, "html", color = "green", italic = T)),
+    hp = color_bar("lightgreen")(hp)
+  ) %>%
+  select(car, everything()) %>%
+  kable("html", escape = F) %>%
+  kable_styling("hover", full_width = F) %>%
+  column_spec(5, width = "3cm") %>%
+  add_header_above(c(" ", "Hello" = 2, "World" = 2))
+
+## ------------------------------------------------------------------------
 kable(dt, "html") %>%
   kable_styling("striped") %>%
   add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
