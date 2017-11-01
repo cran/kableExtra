@@ -11,7 +11,7 @@
 
 <meta name="author" content="Hao Zhu" />
 
-<meta name="date" content="2017-10-24" />
+<meta name="date" content="2017-10-31" />
 
 <title>Create Awesome HTML Table with knitr::kable and kableExtra</title>
 
@@ -217,7 +217,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Create Awesome HTML Table with knitr::kable and kableExtra</h1>
 <h4 class="author"><em>Hao Zhu</em></h4>
-<h4 class="date"><em>2017-10-24</em></h4>
+<h4 class="date"><em>2017-10-31</em></h4>
 
 </div>
 
@@ -1622,7 +1622,7 @@ Features
 <td style="text-align:left;font-weight: bold;border-right:1px solid;">
 Item 1
 </td>
-<td style="text-align:left;width: 30em; display: inline-block; background-color: yellow;">
+<td style="text-align:left;width: 30em; background-color: yellow;">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vehicula tempor ex. Morbi malesuada sagittis turpis, at venenatis nisl luctus a.
 </td>
 </tr>
@@ -1630,7 +1630,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vehicula tempor e
 <td style="text-align:left;font-weight: bold;border-right:1px solid;">
 Item 2
 </td>
-<td style="text-align:left;width: 30em; display: inline-block; background-color: yellow;">
+<td style="text-align:left;width: 30em; background-color: yellow;">
 In eu urna at magna luctus rhoncus quis in nisl. Fusce in velit varius, posuere risus et, cursus augue. Duis eleifend aliquam ante, a aliquet ex tincidunt in.
 </td>
 </tr>
@@ -1638,7 +1638,7 @@ In eu urna at magna luctus rhoncus quis in nisl. Fusce in velit varius, posuere 
 <td style="text-align:left;font-weight: bold;border-right:1px solid;">
 Item 3
 </td>
-<td style="text-align:left;width: 30em; display: inline-block; background-color: yellow;">
+<td style="text-align:left;width: 30em; background-color: yellow;">
 Vivamus venenatis egestas eros ut tempus. Vivamus id est nisi. Aliquam molestie erat et sollicitudin venenatis. In ac lacus at velit scelerisque mattis.
 </td>
 </tr>
@@ -2432,7 +2432,7 @@ mtcars[1:5, 1:4] %&gt;%
 <table class="table table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
@@ -2477,7 +2477,7 @@ Mazda RX4
 <td style="text-align:left;">
 <span style=" font-style: italic;color: green;">160</span>
 </td>
-<td style="text-align:left;width: 3cm; display: inline-block; ">
+<td style="text-align:left;width: 3cm; ">
 <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 62.86%">110</span>
 </td>
 </tr>
@@ -2494,7 +2494,7 @@ Mazda RX4 Wag
 <td style="text-align:left;">
 <span style=" font-style: italic;color: green;">160</span>
 </td>
-<td style="text-align:left;width: 3cm; display: inline-block; ">
+<td style="text-align:left;width: 3cm; ">
 <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 62.86%">110</span>
 </td>
 </tr>
@@ -2511,7 +2511,7 @@ Datsun 710
 <td style="text-align:left;">
 <span style=" font-style: italic;color: green;">108</span>
 </td>
-<td style="text-align:left;width: 3cm; display: inline-block; ">
+<td style="text-align:left;width: 3cm; ">
 <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 53.14%">93</span>
 </td>
 </tr>
@@ -2528,7 +2528,7 @@ Hornet 4 Drive
 <td style="text-align:left;">
 <span style=" font-weight: bold;color: red;">258</span>
 </td>
-<td style="text-align:left;width: 3cm; display: inline-block; ">
+<td style="text-align:left;width: 3cm; ">
 <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 62.86%">110</span>
 </td>
 </tr>
@@ -2545,7 +2545,7 @@ Hornet Sportabout
 <td style="text-align:left;">
 <span style=" font-weight: bold;color: red;">360</span>
 </td>
-<td style="text-align:left;width: 3cm; display: inline-block; ">
+<td style="text-align:left;width: 3cm; ">
 <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%">175</span>
 </td>
 </tr>
@@ -2564,7 +2564,7 @@ Hornet Sportabout
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
@@ -2732,7 +2732,7 @@ Hornet Sportabout
 <table class="table table-striped table-bordered" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="6">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
@@ -2741,7 +2741,7 @@ Group 6
 </th>
 </tr>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="4">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
@@ -2755,7 +2755,7 @@ Group 5
 </th>
 </tr>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
@@ -3541,7 +3541,7 @@ c
 1
 </td>
 <td style="text-align:center;">
-1
+0
 </td>
 </tr>
 <tr>
@@ -3573,7 +3573,7 @@ c
 5
 </td>
 <td style="text-align:center;">
-1
+0
 </td>
 </tr>
 <tr>
@@ -3589,7 +3589,7 @@ c
 7
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3608,7 +3608,7 @@ d
 9
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3616,7 +3616,7 @@ d
 10
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3638,7 +3638,7 @@ c
 12
 </td>
 <td style="text-align:center;">
-1
+0
 </td>
 </tr>
 <tr>
@@ -4182,7 +4182,7 @@ Demo Table<sup>*</sup>
 </caption>
 <thead>
 <tr>
-<th style="border-bottom:hidden">
+<th style="border-bottom:hidden" colspan="1">
 </th>
 <th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="3">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
