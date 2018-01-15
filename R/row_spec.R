@@ -10,8 +10,12 @@
 #' need to be bolded.
 #' @param italic A T/F value to control whether the text of the selected row
 #' need to be emphasized.
-#' @param monospace A T/F value to control whether the text of the selected column
+#' @param monospace A T/F value to control whether the text of the selected row
 #' need to be monospaced (verbatim)
+#' @param underline A T/F value to control whether the text of the selected row
+#' need to be underlined
+#' @param strikeout A T/F value to control whether the text of the selected row
+#' need to be stricked out.
 #' @param color A character string for row text color. For example, "red" or
 #' "#BBBBBB".
 #' @param background A character string for row background color. Here please
@@ -23,6 +27,12 @@
 #' options including `xx-small`, `x-small`, `small`, `medium`, `large`,
 #' `x-large`, `xx-large`, `smaller`, `larger`, `initial` and `inherit`.
 #' @param angle 0-360, degree that the text will rotate.
+#' @param extra_css Extra css text to be passed into the cells of the row. Note
+#' that it's not for the whole row.
+#' @param hline_after T/F. A replicate of `hline.after` in xtable. It
+#' addes a hline after ther row
+#' @param extra_latex_after Extra LaTeX text to be added after the row. Similar
+#' with `add.to.row` in xtable
 #'
 #' @examples x <- knitr::kable(head(mtcars), "html")
 #' row_spec(x, 1:2, bold = TRUE, italic = TRUE)
@@ -30,28 +40,38 @@
 #' @export
 row_spec <- function(kable_input, row,
                      bold = FALSE, italic = FALSE, monospace = FALSE,
+                     underline = FALSE, strikeout = FALSE,
                      color = NULL, background = NULL, align = NULL,
-                     font_size = NULL, angle = NULL) {
+                     font_size = NULL, angle = NULL, extra_css = NULL,
+                     hline_after = FALSE, extra_latex_after = NULL) {
   if (!is.numeric(row)) {
     stop("row must be numeric. ")
   }
   kable_format <- attr(kable_input, "format")
   if (!kable_format %in% c("html", "latex")) {
-    message("Currently generic markdown table using pandoc is not supported.")
+    warning("Please specify format in kable. kableExtra can customize either ",
+            "HTML or LaTeX outputs. See https://haozhu233.github.io/kableExtra/ ",
+            "for details.")
     return(kable_input)
   }
   if (kable_format == "html") {
     return(row_spec_html(kable_input, row, bold, italic, monospace,
-                         color, background, align, font_size, angle))
+                         underline, strikeout,
+                         color, background, align, font_size, angle,
+                         extra_css))
   }
   if (kable_format == "latex") {
     return(row_spec_latex(kable_input, row, bold, italic, monospace,
-                          color, background, align, font_size, angle))
+                          underline, strikeout,
+                          color, background, align, font_size, angle,
+                          hline_after, extra_latex_after))
   }
 }
 
 row_spec_html <- function(kable_input, row, bold, italic, monospace,
-                          color, background, align, font_size, angle) {
+                          underline, strikeout,
+                          color, background, align, font_size, angle,
+                          extra_css) {
   kable_attrs <- attributes(kable_input)
   kable_xml <- read_kable_as_xml(kable_input)
 
@@ -66,8 +86,9 @@ row_spec_html <- function(kable_input, row, bold, italic, monospace,
     original_header_row <- xml_child(kable_thead, length(xml_children(kable_thead)))
     for (theader_i in 1:length(xml_children(original_header_row))) {
       target_header_cell <- xml_child(original_header_row, theader_i)
-      xml_cell_style(target_header_cell, bold, italic, monospace, color, background,
-                     align, font_size, angle)
+      xml_cell_style(target_header_cell, bold, italic, monospace,
+                     underline, strikeout, color, background,
+                     align, font_size, angle, extra_css)
     }
     row <- row[row != 0]
   }
@@ -85,19 +106,22 @@ row_spec_html <- function(kable_input, row, bold, italic, monospace,
       target_row <- xml_child(kable_tbody, j)
       for (i in 1:length(xml_children(target_row))) {
         target_cell <- xml_child(target_row, i)
-        xml_cell_style(target_cell, bold, italic, monospace, color, background,
-                       align, font_size, angle)
+        xml_cell_style(target_cell, bold, italic, monospace,
+                       underline, strikeout, color, background,
+                       align, font_size, angle, extra_css)
       }
     }
   }
 
   out <- as_kable_xml(kable_xml)
   attributes(out) <- kable_attrs
+  if (!"kableExtra" %in% class(out)) class(out) <- c("kableExtra", class(out))
   return(out)
 }
 
-xml_cell_style <- function(x, bold, italic, monospace, color, background,
-                           align, font_size, angle) {
+xml_cell_style <- function(x, bold, italic, monospace,
+                           underline, strikeout, color, background,
+                           align, font_size, angle, extra_css) {
   if (bold) {
     xml_attr(x, "style") <- paste0(xml_attr(x, "style"),
                                    "font-weight: bold;")
@@ -109,6 +133,14 @@ xml_cell_style <- function(x, bold, italic, monospace, color, background,
   if (monospace) {
     xml_attr(x, "style") <- paste0(xml_attr(x, "style"),
                                    "font-family: monospace;")
+  }
+  if (underline) {
+    xml_attr(x, "style") <- paste0(xml_attr(x, "style"),
+                                   "text-decoration: underline;")
+  }
+  if (strikeout) {
+    xml_attr(x, "style") <- paste0(xml_attr(x, "style"),
+                                   "text-decoration: line-through;")
   }
   if (!is.null(color)) {
     xml_attr(x, "style") <- paste0(xml_attr(x, "style"),
@@ -136,11 +168,16 @@ xml_cell_style <- function(x, bold, italic, monospace, color, background,
                                    "deg); transform: rotate(", angle,
                                    "deg);")
   }
+  if (!is.null(extra_css)) {
+    xml_attr(x, "style") <- paste0(xml_attr(x, "style"), extra_css)
+  }
   return(x)
 }
 
 row_spec_latex <- function(kable_input, row, bold, italic, monospace,
-                           color, background, align, font_size, angle) {
+                           underline, strikeout,
+                           color, background, align, font_size, angle,
+                           hline_after, extra_latex_after) {
   table_info <- magic_mirror(kable_input)
   out <- enc2utf8(as.character(kable_input))
 
@@ -154,8 +191,12 @@ row_spec_latex <- function(kable_input, row, bold, italic, monospace,
   for (i in row) {
     target_row <- table_info$contents[i]
     new_row <- latex_new_row_builder(target_row, bold, italic, monospace,
-                                     color, background, align, font_size, angle)
-    out <- sub(target_row, new_row, out, perl = T)
+                                     underline, strikeout,
+                                     color, background, align, font_size, angle,
+                                     hline_after, extra_latex_after)
+    out <- str_replace(out,
+                       paste0(target_row, "\\\\\\\\"),
+                       new_row)
   }
 
   out <- structure(out, format = "latex", class = "knitr_kable")
@@ -164,11 +205,13 @@ row_spec_latex <- function(kable_input, row, bold, italic, monospace,
 }
 
 latex_new_row_builder <- function(target_row, bold, italic, monospace,
-                                  color, background, align, font_size, angle) {
+                                  underline, strikeout,
+                                  color, background, align, font_size, angle,
+                                  hline_after, extra_latex_after) {
   new_row <- latex_row_cells(target_row)
   if (bold) {
     new_row <- lapply(new_row, function(x) {
-      paste0("\\\\bfseries{", x, "}")
+      paste0("\\\\textbf{", x, "}")
     })
   }
   if (italic) {
@@ -181,7 +224,16 @@ latex_new_row_builder <- function(target_row, bold, italic, monospace,
       paste0("\\\\ttfamily{", x, "}")
     })
   }
-
+  if (underline) {
+    new_row <- lapply(new_row, function(x) {
+      paste0("\\\\underline{", x, "}")
+    })
+  }
+  if (strikeout) {
+    new_row <- lapply(new_row, function(x) {
+      paste0("\\\\sout{", x, "}")
+    })
+  }
   if (!is.null(color)) {
     new_row <- lapply(new_row, function(x) {
       paste0("\\\\textcolor", latex_color(color), "{", x, "}")
@@ -208,8 +260,17 @@ latex_new_row_builder <- function(target_row, bold, italic, monospace,
   new_row <- paste(unlist(new_row), collapse = " & ")
 
   if (!is.null(background)) {
-    new_row <- paste0("\\\\rowcolor{", background, "}  ", new_row)
+    new_row <- paste0("\\\\rowcolor", latex_color(background), "  ", new_row)
   }
 
+  new_row <- paste0(new_row, "\\\\\\\\")
+
+  if (hline_after) {
+    new_row <- paste0(new_row, "\n\\\\hline")
+  }
+  if (!is.null(extra_latex_after)) {
+    new_row <- paste0(new_row, "\n",
+                      regex_escape(extra_latex_after, double_backslash = TRUE))
+  }
   return(new_row)
 }

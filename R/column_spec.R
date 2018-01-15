@@ -13,6 +13,10 @@
 #' need to be emphasized.
 #' @param monospace A T/F value to control whether the text of the selected column
 #' need to be monospaced (verbatim)
+#' @param underline A T/F value to control whether the text of the selected row
+#' need to be underlined
+#' @param strikeout A T/F value to control whether the text of the selected row
+#' need to be stricked out.
 #' @param color A character string for column text color. Here please pay
 #' attention to the differences in color codes between HTML and LaTeX.
 #' @param background A character string for column background color. Here please
@@ -23,6 +27,8 @@
 #' @param border_right A logical variable indicating whether there should be a
 #' border line on the right of the selected column. In HTML, you can also pass
 #' in a character string for the CSS of the border line
+#' @param extra_css Extra css text to be passed into the cells of the row. Note
+#' that it's not for the whole column but to each individual cells
 #'
 #' @examples x <- knitr::kable(head(mtcars), "html")
 #' column_spec(x, 1:2, width = "20em", bold = TRUE, italic = TRUE)
@@ -30,25 +36,31 @@
 #' @export
 column_spec <- function(kable_input, column,
                         width = NULL, bold = FALSE, italic = FALSE,
-                        monospace = FALSE, color = NULL, background = NULL,
-                        border_left = FALSE, border_right = FALSE) {
+                        monospace = FALSE, underline = FALSE, strikeout = FALSE,
+                        color = NULL, background = NULL,
+                        border_left = FALSE, border_right = FALSE,
+                        extra_css = NULL) {
   if (!is.numeric(column)) {
     stop("column must be numeric. ")
   }
   kable_format <- attr(kable_input, "format")
   if (!kable_format %in% c("html", "latex")) {
-    message("Currently generic markdown table using pandoc is not supported.")
+    warning("Please specify format in kable. kableExtra can customize either ",
+            "HTML or LaTeX outputs. See https://haozhu233.github.io/kableExtra/ ",
+            "for details.")
     return(kable_input)
   }
   if (kable_format == "html") {
     return(column_spec_html(kable_input, column, width,
                             bold, italic, monospace,
+                            underline, strikeout,
                             color, background,
-                            border_left, border_right))
+                            border_left, border_right, extra_css))
   }
   if (kable_format == "latex") {
     return(column_spec_latex(kable_input, column, width,
                              bold, italic, monospace,
+                             underline, strikeout,
                              color, background,
                              border_left, border_right))
   }
@@ -56,8 +68,9 @@ column_spec <- function(kable_input, column,
 
 column_spec_html <- function(kable_input, column, width,
                              bold, italic, monospace,
+                             underline, strikeout,
                              color, background,
-                             border_left, border_right) {
+                             border_left, border_right, extra_css) {
   kable_attrs <- attributes(kable_input)
   kable_xml <- read_kable_as_xml(kable_input)
   kable_tbody <- xml_tpart(kable_xml, "tbody")
@@ -101,6 +114,14 @@ column_spec_html <- function(kable_input, column, width,
         xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
                                                  "font-family: monospace;")
       }
+      if (underline) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "text-decoration: underline;")
+      }
+      if (strikeout) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 "text-decoration: line-through;")
+      }
       if (!is.null(color)) {
         xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
                                                  "color: ", color, ";")
@@ -118,17 +139,23 @@ column_spec_html <- function(kable_input, column, width,
         xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
                                                  "border-right:", border_r_css, ";")
       }
+      if (!is.null(extra_css)) {
+        xml_attr(target_cell, "style") <- paste0(xml_attr(target_cell, "style"),
+                                                 extra_css)
+      }
     }
   }
 
 
   out <- as_kable_xml(kable_xml)
   attributes(out) <- kable_attrs
+  if (!"kableExtra" %in% class(out)) class(out) <- c("kableExtra", class(out))
   return(out)
 }
 
 column_spec_latex <- function(kable_input, column, width,
                               bold, italic, monospace,
+                              underline, strikeout,
                               color, background,
                               border_left, border_right) {
   table_info <- magic_mirror(kable_input)
@@ -143,7 +170,7 @@ column_spec_latex <- function(kable_input, column, width,
     table_info$align_vector_origin[column],
     function(x) {
       latex_column_align_builder(
-        x, width, bold, italic, monospace,
+        x, width, bold, italic, monospace, underline, strikeout,
         color, background, border_left, border_right)
     }
   ))
@@ -167,6 +194,7 @@ column_spec_latex <- function(kable_input, column, width,
 }
 
 latex_column_align_builder <- function(x, width, bold, italic, monospace,
+                                       underline, strikeout,
                                        color, background,
                                        border_left, border_right) {
   extra_align <- ""
@@ -179,15 +207,16 @@ latex_column_align_builder <- function(x, width, bold, italic, monospace,
   }
 
   if (!is.null(color)) {
-    color <- paste0("\\\\color", latex_color(color))
+    color <- paste0("\\\\leavevmode\\\\color", latex_color(color))
   }
 
   if (!is.null(background)) {
-    background <- sprintf("\\\\columncolor{%s}", background)
+    background <- paste0("\\\\columncolor", latex_color(background))
   }
 
-  latex_array_options <- c("\\\\bfseries", "\\\\em", "\\\\ttfamily")[
-    c(bold, italic, monospace)]
+  latex_array_options <- c("\\\\bfseries", "\\\\em", "\\\\ttfamily",
+                           "\\\\underline", "\\\\sout")[
+                             c(bold, italic, monospace, underline, strikeout)]
   latex_array_options <- c(latex_array_options, extra_align,
                            color, background)
   latex_array_options <- paste0(
@@ -195,10 +224,10 @@ latex_column_align_builder <- function(x, width, bold, italic, monospace,
   )
   x <- paste0(latex_array_options, x)
   if (border_left) {
-    x <- paste0("|", x)
+    x <- paste0("\\|", x)
   }
   if (border_right) {
-    x <- paste0(x, "|")
+    x <- paste0(x, "\\|")
   }
 
   return(x)

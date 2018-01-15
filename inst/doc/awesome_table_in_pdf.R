@@ -80,6 +80,7 @@ kable(text_tbl, format = "latex", booktabs = T) %>%
 kable(dt, format = "latex", booktabs = T) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(7, border_left = T, bold = T) %>%
+  row_spec(1, strikeout = T) %>%
   row_spec(3:5, bold = T, color = "white", background = "black")
 
 ## ------------------------------------------------------------------------
@@ -165,7 +166,7 @@ collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
                  C4 = sample(c(0,1), 15, replace = TRUE))
 kable(collapse_rows_dt, format = "latex", booktabs = T, align = "c") %>%
   column_spec(1, bold=T) %>%
-  collapse_rows(columns = 1:2)
+  collapse_rows(columns = 1:2, latex_hline = "major")
 
 ## ------------------------------------------------------------------------
 kable(collapse_rows_dt, format = "latex", align = "c") %>%
@@ -173,28 +174,39 @@ kable(collapse_rows_dt, format = "latex", align = "c") %>%
   collapse_rows(1:2)
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
-  kable_styling() %>%
-  add_footnote(c("Footnote 1", "Have a good day."), notation = "alphabet")
+kable(dt, "latex", align = "c") %>%
+  kable_styling(full_width = F) %>%
+  footnote(general = "Here is a general comments of the table. ",
+           number = c("Footnote 1; ", "Footnote 2; "),
+           alphabet = c("Footnote A; ", "Footnote B; "),
+           symbol = c("Footnote Symbol 1; ", "Footnote Symbol 2")
+           )
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
-  kable_styling() %>%
-  add_footnote(c("Footnote 1", "Have a good day."), notation = "number")
+kable(dt, "latex", align = "c", booktabs = T) %>%
+  footnote(general = "Here is a general comments of the table. ",
+           number = c("Footnote 1; ", "Footnote 2; "),
+           alphabet = c("Footnote A; ", "Footnote B; "),
+           symbol = c("Footnote Symbol 1; ", "Footnote Symbol 2"),
+           general_title = "General: ", number_title = "Type I: ",
+           alphabet_title = "Type II: ", symbol_title = "Type III: ",
+           footnote_as_chunk = T
+           )
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
-  kable_styling() %>%
-  add_footnote(c("Footnote 1", "Footnote 2", "Footnote 3"), notation = "symbol")
-
-## ------------------------------------------------------------------------
-kable(dt, format = "latex", caption = "Demo Table[note]", booktabs = T) %>%
-  kable_styling(latex_options = "hold_position") %>%
-  add_header_above(c(" ", "Group 1[note]" = 3, "Group 2[note]" = 3)) %>%
-  add_footnote(c("This table is from mtcars", 
-                 "Group 1 contains mpg, cyl and disp", 
-                 "Group 2 contains hp, drat and wt"), 
-               notation = "symbol")
+dt_footnote <- dt
+names(dt_footnote)[2] <- paste0(names(dt_footnote)[2], 
+                                # That "latex" can be eliminated if defined in global
+                                footnote_marker_symbol(1, "latex"))
+row.names(dt_footnote)[4] <- paste0(row.names(dt_footnote)[4], 
+                                footnote_marker_alphabet(1))
+kable(dt_footnote, "latex", align = "c", booktabs = T,
+      # Remember this escape = F
+      escape = F) %>%
+  footnote(alphabet = "Footnote A; ",
+           symbol = "Footnote Symbol 1; ",
+           alphabet_title = "Type II: ", symbol_title = "Type III: ",
+           footnote_as_chunk = T)
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%

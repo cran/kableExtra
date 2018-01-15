@@ -1,7 +1,7 @@
 Package: kableExtra
 Type: Package
 Title: Construct Complex Table with 'kable' and Pipe Syntax
-Version: 0.6.1
+Version: 0.7.0
 Authors@R: c(
     person('Hao', 'Zhu', email = 'haozhu233@gmail.com', role = c('aut', 'cre')),
     person('Timothy', 'Tsai', role = 'ctb'),
@@ -25,15 +25,15 @@ URL: http://haozhu233.github.io/kableExtra/,
         https://github.com/haozhu233/kableExtra
 BugReports: https://github.com/haozhu233/kableExtra/issues
 Depends: R (>= 3.1.0)
-Imports: knitr (>= 1.13), magrittr, stringr (>= 1.0), xml2, rvest,
+Imports: knitr (>= 1.16), magrittr, stringr (>= 1.0), xml2, rvest,
         rmarkdown (>= 1.6.0), readr, scales, viridisLite, stats,
-        grDevices
+        grDevices, htmltools
 Suggests: testthat, magick, formattable, dplyr
 VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-10-31 21:09:42 UTC; haozhu
+Packaged: 2018-01-15 04:54:57 UTC; haozhu
 Author: Hao Zhu [aut, cre],
   Timothy Tsai [ctb],
   Thomas Travison [ctb],
@@ -45,4 +45,4 @@ Author: Hao Zhu [aut, cre],
   Yoni Sidi [ctb]
 Maintainer: Hao Zhu <haozhu233@gmail.com>
 Repository: CRAN
-Date/Publication: 2017-11-01 07:39:00 UTC
+Date/Publication: 2018-01-15 14:37:00 UTC

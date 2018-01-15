@@ -8,6 +8,10 @@
 #' @param bold T/F for font bold.
 #' @param italic T/F for font italic.
 #' @param monospace T/F for font monospaced (verbatim)
+#' @param underline A T/F value to control whether the text of the selected row
+#' need to be underlined
+#' @param strikeout A T/F value to control whether the text of the selected row
+#' need to be stricked out.
 #' @param color A character string for text color. Here please pay
 #' attention to the differences in color codes between HTML and LaTeX.
 #' @param background A character string for background color. Here please
@@ -32,6 +36,7 @@
 #' bootstrap module manually. Read the package vignette to see how.
 #' @param link A vector of strings for url links. Can be used together with
 #' tooltip and popover.
+#' @param extra_css Extra css text to be passed into the cell
 #' @param escape T/F value showing whether special characters should be escaped.
 #' @param background_as_tile T/F value indicating if you want to have round
 #' cornered tile as background in HTML.
@@ -43,41 +48,50 @@
 #' @export
 cell_spec <- function(x, format,
                       bold = FALSE, italic = FALSE, monospace = FALSE,
+                      underline = FALSE, strikeout = FALSE,
                       color = NULL, background = NULL,
                       align = NULL, font_size = NULL, angle = NULL,
                       tooltip = NULL, popover = NULL, link = NULL,
+                      extra_css = NULL,
                       escape = TRUE,
                       background_as_tile = TRUE,
                       latex_background_in_cell = TRUE) {
 
-  if (missing(format) || is.null(format)) format = getOption('knitr.table.format')
+  if (missing(format) || is.null(format)) {
+    format <- getOption('knitr.table.format')
+  }
   if (is.null(format)) {
     message("Setting cell_spec format as html")
     format <- "html"
   }
 
   if (tolower(format) == "html") {
-    return(cell_spec_html(x, bold, italic, monospace,
+    return(cell_spec_html(x, bold, italic, monospace, underline, strikeout,
                           color, background, align, font_size, angle,
-                          tooltip, popover, link,
+                          tooltip, popover, link, extra_css,
                           escape, background_as_tile))
   }
   if (tolower(format) == "latex") {
-    return(cell_spec_latex(x, bold, italic, monospace,
+    return(cell_spec_latex(x, bold, italic, monospace, underline, strikeout,
                            color, background, align, font_size, angle, escape,
                            latex_background_in_cell))
   }
 }
 
-cell_spec_html <- function(x, bold, italic, monospace,
+cell_spec_html <- function(x, bold, italic, monospace, underline, strikeout,
                            color, background, align, font_size, angle,
-                           tooltip, popover, link,
+                           tooltip, popover, link, extra_css,
                            escape, background_as_tile) {
   if (escape) x <- escape_html(x)
   cell_style <- NULL
-  if (bold) cell_style <- paste(cell_style,"font-weight: bold;")
-  if (italic) cell_style <- paste(cell_style, "font-style: italic;")
-  if (monospace) cell_style <- paste(cell_style, "font-family: monospace;")
+  cell_style <- paste(cell_style, ifelse(bold, "font-weight: bold;", ""))
+  cell_style <- paste(cell_style, ifelse(italic, "font-style: italic;", ""))
+  cell_style <- paste(cell_style,
+                      ifelse(monospace, "font-family: monospace;", ""))
+  cell_style <- paste(cell_style,
+                      ifelse(underline, "text-decoration: underline;", ""))
+  cell_style <- paste(cell_style,
+                      ifelse(strikeout, "text-decoration: line-through;", ""))
   if (!is.null(color)) {
     cell_style <- paste0(cell_style, "color: ", html_color(color), ";")
   }
@@ -88,6 +102,9 @@ cell_spec_html <- function(x, bold, italic, monospace,
       "padding-right: 4px; padding-left: 4px; ",
       "background-color: ", html_color(background), ";"
     )
+  }
+  if (!is.null(extra_css)) {
+    cell_style <- paste0(cell_style, extra_css)
   }
   if (!is.null(align)) {
     cell_style <- paste0(cell_style, "text-align: ", align, ";")
@@ -140,13 +157,15 @@ cell_spec_html <- function(x, bold, italic, monospace,
   return(x)
 }
 
-cell_spec_latex <- function(x, bold, italic, monospace,
+cell_spec_latex <- function(x, bold, italic, monospace, underline, strikeout,
                             color, background, align, font_size, angle, escape,
                             latex_background_in_cell) {
   if (escape) x <- escape_latex(x)
-  if (bold) x <- paste0("\\bfseries{", x, "}")
-  if (italic) x <- paste0("\\em{", x, "}")
-  if (monospace) x <- paste0("\\ttfamily{", x, "}")
+  x <- sprintf(ifelse(bold, "\\textbf{%s}", "%s"), x)
+  x <- sprintf(ifelse(italic, "\\em{%s}", "%s"), x)
+  x <- sprintf(ifelse(monospace, "\\ttfamily{%s}", "%s"), x)
+  x <- sprintf(ifelse(underline, "\\underline{%s}", "%s"), x)
+  x <- sprintf(ifelse(strikeout, "\\sout{%s}", "%s"), x)
   if (!is.null(color)) {
     color <- latex_color(color)
     x <- paste0("\\textcolor", color, "{", x, "}")
@@ -169,12 +188,14 @@ cell_spec_latex <- function(x, bold, italic, monospace,
 #' @export
 text_spec <- function(x, format,
                       bold = FALSE, italic = FALSE, monospace = FALSE,
+                      underline = FALSE, strikeout = FALSE,
                       color = NULL, background = NULL,
                       align = NULL, font_size = NULL, angle = NULL,
                       tooltip = NULL, popover = NULL, link = NULL,
                       escape = TRUE, background_as_tile = TRUE,
                       latex_background_in_cell = FALSE) {
-  cell_spec(x, format, bold, italic, monospace, color, background, align,
+  cell_spec(x, format, bold, italic, monospace, underline, strikeout,
+            color, background, align,
             font_size, angle, tooltip, popover, link, escape, background_as_tile,
             latex_background_in_cell)
 }

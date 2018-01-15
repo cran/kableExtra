@@ -189,28 +189,40 @@ kable(collapse_rows_dt, "html", align = "c") %>%
   collapse_rows(columns = 1:2)
 
 ## ------------------------------------------------------------------------
-kable(dt, "html") %>%
-  kable_styling("striped") %>%
-  add_footnote(c("Footnote 1", "Have a good day."), notation = "alphabet")
+kable(dt, "html", align = "c") %>%
+  kable_styling(full_width = F) %>%
+  footnote(general = "Here is a general comments of the table. ",
+           number = c("Footnote 1; ", "Footnote 2; "),
+           alphabet = c("Footnote A; ", "Footnote B; "),
+           symbol = c("Footnote Symbol 1; ", "Footnote Symbol 2")
+           )
 
 ## ------------------------------------------------------------------------
-kable(dt, "html") %>%
-  kable_styling("striped") %>%
-  add_footnote(c("Footnote 1", "Have a good day."), notation = "number")
+kable(dt, "html", align = "c") %>%
+  kable_styling(full_width = F) %>%
+  footnote(general = "Here is a general comments of the table. ",
+           number = c("Footnote 1; ", "Footnote 2; "),
+           alphabet = c("Footnote A; ", "Footnote B; "),
+           symbol = c("Footnote Symbol 1; ", "Footnote Symbol 2"),
+           general_title = "General: ", number_title = "Type I: ",
+           alphabet_title = "Type II: ", symbol_title = "Type III: ",
+           footnote_as_chunk = T
+           )
 
 ## ------------------------------------------------------------------------
-kable(dt, "html") %>%
-  kable_styling("striped") %>%
-  add_footnote(c("Footnote 1", "Footnote 2", "Footnote 3"), notation = "symbol")
-
-## ------------------------------------------------------------------------
-kable(dt, "html", caption = "Demo Table[note]") %>%
-  kable_styling("striped") %>%
-  add_header_above(c(" ", "Group 1[note]" = 3, "Group 2[note]" = 3)) %>%
-  add_footnote(c("This table is from mtcars", 
-                 "Group 1 contains mpg, cyl and disp", 
-                 "Group 2 contains hp, drat and wt"), 
-               notation = "symbol")
+dt_footnote <- dt
+names(dt_footnote)[2] <- paste0(names(dt_footnote)[2], 
+                                footnote_marker_symbol(1))
+row.names(dt_footnote)[4] <- paste0(row.names(dt_footnote)[4], 
+                                footnote_marker_alphabet(1))
+kable(dt_footnote, "html", align = "c", 
+      # Remember this escape = F
+      escape = F) %>%
+  kable_styling(full_width = F) %>%
+  footnote(alphabet = "Footnote A; ",
+           symbol = "Footnote Symbol 1; ",
+           alphabet_title = "Type II: ", symbol_title = "Type III: ",
+           footnote_as_chunk = T)
 
 ## ------------------------------------------------------------------------
 kable(cbind(mtcars, mtcars), "html") %>%

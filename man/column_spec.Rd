@@ -5,8 +5,9 @@
 \title{Specify the look of the selected column}
 \usage{
 column_spec(kable_input, column, width = NULL, bold = FALSE,
-  italic = FALSE, monospace = FALSE, color = NULL, background = NULL,
-  border_left = FALSE, border_right = FALSE)
+  italic = FALSE, monospace = FALSE, underline = FALSE,
+  strikeout = FALSE, color = NULL, background = NULL,
+  border_left = FALSE, border_right = FALSE, extra_css = NULL)
 }
 \arguments{
 \item{kable_input}{Output of \code{knitr::kable()} with \code{format} specified}
@@ -25,6 +26,12 @@ need to be emphasized.}
 \item{monospace}{A T/F value to control whether the text of the selected column
 need to be monospaced (verbatim)}
 
+\item{underline}{A T/F value to control whether the text of the selected row
+need to be underlined}
+
+\item{strikeout}{A T/F value to control whether the text of the selected row
+need to be stricked out.}
+
 \item{color}{A character string for column text color. Here please pay
 attention to the differences in color codes between HTML and LaTeX.}
 
@@ -38,6 +45,9 @@ in a character string for the CSS of the border line}
 \item{border_right}{A logical variable indicating whether there should be a
 border line on the right of the selected column. In HTML, you can also pass
 in a character string for the CSS of the border line}
+
+\item{extra_css}{Extra css text to be passed into the cells of the row. Note
+that it's not for the whole column but to each individual cells}
 }
 \description{
 This function allows users to select a column and then specify
