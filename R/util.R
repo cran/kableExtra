@@ -108,7 +108,8 @@ latex_pkg_list <- function() {
     "\\usepackage{colortbl}",
     "\\usepackage{pdflscape}",
     "\\usepackage{tabu}",
-    "\\usepackage{threeparttable}"
+    "\\usepackage{threeparttable}",
+    "\\usepackage[normalem]{ulem}"
   ))
 }
 
@@ -124,7 +125,7 @@ fix_duplicated_rows_latex <- function(kable_input, table_info) {
     empty_times <- dup_index[i] - 1
     new_row <- str_replace(
       dup_row, "&",
-      paste0("&\\\\\\\\vphantom\\\\{", empty_times, "\\\\}"))
+      paste0("& \\\\\\\\vphantom\\\\{", empty_times, "\\\\}"))
     kable_input <- str_replace(kable_input, dup_row, new_row)
     table_info$contents[i] <- new_row
   }
@@ -132,5 +133,13 @@ fix_duplicated_rows_latex <- function(kable_input, table_info) {
   return(list(kable_input, table_info))
 }
 
+# Solve enc issue for LaTeX tables
+solve_enc <- function(x) {
+  enc2utf8(as.character(base::format(x, trim = TRUE, justify = 'none')))
+}
 
+input_escape <- function(x, latex_align) {
+  x <- escape_latex2(x)
+  x <- linebreak(x, align = latex_align, double_escape = TRUE)
+}
 

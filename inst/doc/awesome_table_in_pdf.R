@@ -10,7 +10,7 @@ options(knitr.table.format = "latex")
 
 ## ---- eval = FALSE-------------------------------------------------------
 #  # Not evaluated. Ilustration purpose
-#  options(kableExtra.latex.load_package = FALSE)
+#  options(kableExtra.latex.load_packages = FALSE)
 #  library(kableExtra)
 
 ## ------------------------------------------------------------------------
@@ -155,6 +155,13 @@ kable(dt, format = "latex", booktabs = T) %>%
 #    group_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
 #  # Not evaluated. The code above should have the same result as the first example in this section.
 
+## ---- eval=F-------------------------------------------------------------
+#  kable(mtcars[1:2, 1:2], "latex", align = c("cl"))
+#  # \begin{tabular}{l|cl|cl}  # Note the column alignment here
+#  # \hline
+#  #   & mpg & cyl\\
+#  # ...
+
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", booktabs = T) %>%
   add_indent(c(1, 3, 5))
@@ -172,6 +179,33 @@ kable(collapse_rows_dt, format = "latex", booktabs = T, align = "c") %>%
 kable(collapse_rows_dt, format = "latex", align = "c") %>%
   column_spec(1, bold = T, width = "5em") %>%
   collapse_rows(1:2)
+
+## ------------------------------------------------------------------------
+collapse_rows_dt <- expand.grid(
+  Country = sprintf('Country with a long name %s', c('A', 'B')),
+  State = sprintf('State %s', c('a', 'b')),
+  City = sprintf('City %s', c('1', '2')),
+  District = sprintf('District %s', c('1', '2'))
+) %>% arrange(Country, State, City) %>%
+  mutate_all(as.character) %>%
+  mutate(C1 = rnorm(n()),
+         C2 = rnorm(n()))
+
+kable(collapse_rows_dt, format = "latex", 
+      booktabs = T, align = "c", linesep = '') %>%
+  collapse_rows(1:3, row_group_label_position = 'stack') 
+
+## ------------------------------------------------------------------------
+row_group_label_fonts <- list(
+  list(bold = T, italic = T), 
+  list(bold = F, italic = F)
+  )
+kable(collapse_rows_dt, format = "latex", 
+                     booktabs = T, align = "c", linesep = '') %>%
+  column_spec(1, bold=T) %>%
+  collapse_rows(1:3, latex_hline = 'custom', custom_latex_hline = 1:3, 
+                row_group_label_position = 'stack', 
+                row_group_label_fonts = row_group_label_fonts) 
 
 ## ------------------------------------------------------------------------
 kable(dt, "latex", align = "c") %>%
@@ -207,6 +241,22 @@ kable(dt_footnote, "latex", align = "c", booktabs = T,
            symbol = "Footnote Symbol 1; ",
            alphabet_title = "Type II: ", symbol_title = "Type III: ",
            footnote_as_chunk = T)
+
+## ------------------------------------------------------------------------
+kable(dt, "latex", align = "c", booktabs = T, caption = "s") %>%
+  footnote(general = "Here is a very very very very very very very very very very very very very very very very very very very very long footnote", 
+           threeparttable = T)
+
+## ------------------------------------------------------------------------
+dt_lb <- data.frame(
+  Item = c("Hello\nWorld", "This\nis a cat"), 
+  Value = c(10, 100)
+)
+
+dt_lb %>%
+  mutate_all(linebreak) %>%
+  kable("latex", booktabs = T, escape = F,
+        col.names = linebreak(c("Item\n(Name)", "Value\n(Number)"), align = "c"))
 
 ## ------------------------------------------------------------------------
 kable(dt, format = "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%

@@ -5,7 +5,8 @@
 \title{Convert a LaTeX table to an image and place it in a rmarkdown document}
 \usage{
 kable_as_image(kable_input, filename = NULL, file_format = "png",
-  latex_header_includes = NULL, keep_pdf = FALSE, density = 300)
+  latex_header_includes = NULL, keep_pdf = FALSE, density = 300,
+  keep_tex = FALSE)
 }
 \arguments{
 \item{kable_input}{Raw LaTeX code to generate a table. It doesn't have to
@@ -20,13 +21,16 @@ here.}
 
 \item{latex_header_includes}{A character vector of extra LaTeX header stuff.
 Each element is a row. You can have things like
-\code{c("\\usepackage{threeparttable}", "\\usepackage{icons}")}}
+\code{c("\\\\usepackage{threeparttable}", "\\\\usepackage{icons}")}}
 
 \item{keep_pdf}{A T/F option to control if the mid-way standalone pdf should
 be kept. Default is \code{FALSE}.}
 
 \item{density}{Resolution to read the PDF file. Default value is 300, which
 should be sufficient in most cases.}
+
+\item{keep_tex}{A T/F option to control if the latex file that is initially created
+should be kept. Default is \code{FALSE}.}
 }
 \description{
 This is a LaTeX-only function. This function will render the

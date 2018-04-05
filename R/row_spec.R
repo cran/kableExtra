@@ -179,7 +179,7 @@ row_spec_latex <- function(kable_input, row, bold, italic, monospace,
                            color, background, align, font_size, angle,
                            hline_after, extra_latex_after) {
   table_info <- magic_mirror(kable_input)
-  out <- enc2utf8(as.character(kable_input))
+  out <- solve_enc(kable_input)
 
   if (table_info$duplicated_rows) {
     dup_fx_out <- fix_duplicated_rows_latex(out, table_info)
@@ -194,9 +194,7 @@ row_spec_latex <- function(kable_input, row, bold, italic, monospace,
                                      underline, strikeout,
                                      color, background, align, font_size, angle,
                                      hline_after, extra_latex_after)
-    out <- str_replace(out,
-                       paste0(target_row, "\\\\\\\\"),
-                       new_row)
+    out <- sub(paste0(target_row, "\\\\\\\\"), new_row, out, perl = T)
   }
 
   out <- structure(out, format = "latex", class = "knitr_kable")

@@ -87,7 +87,8 @@ mtcars[1:10, 1:2] %>%
 ## ------------------------------------------------------------------------
 iris[1:10, ] %>%
   mutate_if(is.numeric, function(x) {
-    cell_spec(x, "html", bold = T, color = spec_color(x, end = 0.9),
+    cell_spec(x, "html", bold = T, 
+              color = spec_color(x, end = 0.9),
               font_size = spec_font_size(x))
   }) %>%
   mutate(Species = cell_spec(

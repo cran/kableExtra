@@ -19,6 +19,19 @@
 #' documents.
 #' @param escape A T/F value showing whether special characters should be
 #' escaped.
+#' @param latex_align Adjust justification of group_label in latex only. Value should be "c" for
+#' centered on row, "r" for right justification, or "l" for left justification. Default
+#' Value is "l"  If using html, the alignment can be set by using the label_row_css
+#' parameter.
+#' @param colnum A numeric that determines how many columns the text should span.
+#' The default setting will have the text span the entire length.
+#' @param bold A T/F value to control whether the text should be bolded.
+#' @param italic A T/F value to control whether the text should to be emphasized.
+#' @param hline_before A T/F value that addes a horizontal line before the group_row label.  Default
+#' value is False.
+#' @param hline_after A replicate of `hline.after` in xtable. It
+#' addes a hline after the row
+#' @param extra_latex_after Extra LaTeX text to be added after the row.
 #'
 #' @examples x <- knitr::kable(head(mtcars), "html")
 #' # Put Row 2 to Row 5 into a Group and label it as "Group A"
@@ -30,7 +43,12 @@ group_rows <- function(kable_input, group_label = NULL,
                        index = NULL,
                        label_row_css = "border-bottom: 1px solid;",
                        latex_gap_space = "0.3em",
-                       escape = TRUE) {
+                       escape = TRUE, latex_align = "l", colnum = NULL,
+                       bold = T,
+                       italic = F,
+                       hline_before = F,
+                       hline_after = F,
+                       extra_latex_after = NULL) {
 
   kable_format <- attr(kable_input, "format")
   if (!kable_format %in% c("html", "latex")) {
@@ -41,28 +59,34 @@ group_rows <- function(kable_input, group_label = NULL,
   }
   if (is.null(index)) {
     if (kable_format == "html") {
+      if(!missing(latex_align)) warning("latex_align parameter is not used in HTML Mode,
+                                    use label_row_css instead.")
       return(group_rows_html(kable_input, group_label, start_row, end_row,
-                             label_row_css, escape))
+                             label_row_css, escape, colnum))
     }
     if (kable_format == "latex") {
       return(group_rows_latex(kable_input, group_label, start_row, end_row,
-                              latex_gap_space, escape))
+                              latex_gap_space, escape, latex_align, colnum,
+                              bold, italic, hline_before, hline_after, extra_latex_after))
     }
   } else {
     index <- group_row_index_translator(index)
     out <- kable_input
     if (kable_format == "html") {
       for (i in 1:nrow(index)) {
+        if(!missing(latex_align)) warning("latex_align parameter is not used in HTML Mode,
+                                    use label_row_css instead.")
         out <- group_rows_html(out, index$header[i],
                                index$start[i], index$end[i],
-                               label_row_css, escape)
+                               label_row_css, escape, colnum)
       }
     }
     if (kable_format == "latex") {
       for (i in 1:nrow(index)) {
         out <- group_rows_latex(out, index$header[i],
                                index$start[i], index$end[i],
-                               latex_gap_space, escape)
+                               latex_gap_space, escape, latex_align, colnum,
+                               bold, italic, hline_before, hline_after, extra_latex_after)
       }
     }
     return(out)
@@ -79,7 +103,7 @@ group_row_index_translator <- function(index) {
 }
 
 group_rows_html <- function(kable_input, group_label, start_row, end_row,
-                            label_row_css, escape) {
+                            label_row_css, escape, colnum) {
   kable_attrs <- attributes(kable_input)
   kable_xml <- read_kable_as_xml(kable_input)
   kable_tbody <- xml_tpart(kable_xml, "tbody")
@@ -97,7 +121,9 @@ group_rows_html <- function(kable_input, group_label, start_row, end_row,
 
   # Insert a group header row
   starting_node <- xml_child(kable_tbody, group_seq[1])
-  kable_ncol <- length(xml_children(starting_node))
+  kable_ncol <- ifelse(is.null(colnum),
+                       length(xml_children(starting_node)),
+                       colnum)
   group_header_row_text <- paste0(
     '<tr groupLength="', length(group_seq), '"><td colspan="', kable_ncol,
     '" style="', label_row_css, '"><strong>', group_label,
@@ -115,9 +141,11 @@ group_rows_html <- function(kable_input, group_label, start_row, end_row,
 }
 
 group_rows_latex <- function(kable_input, group_label, start_row, end_row,
-                             gap_space, escape) {
+                             gap_space, escape, latex_align, colnum,
+                             bold = T, italic = F, hline_before = F ,hline_after = F,
+                             extra_latex_after = NULL) {
   table_info <- magic_mirror(kable_input)
-  out <- enc2utf8(as.character(kable_input))
+  out <- solve_enc(kable_input)
 
   if (table_info$duplicated_rows) {
     dup_fx_out <- fix_duplicated_rows_latex(out, table_info)
@@ -126,26 +154,37 @@ group_rows_latex <- function(kable_input, group_label, start_row, end_row,
   }
 
   if (escape) {
-    group_label <- escape_latex(group_label)
-    group_label <- gsub("\\\\", "\\\\\\\\", group_label)
+    group_label <- input_escape(group_label, latex_align)
   }
 
+  if (bold) {
+    group_label <- paste0("\\\\textbf{", group_label, "}")
+  }
+  if (italic) group_label <- paste0("\\\\textit{", group_label, "}")
   # Add group label
   rowtext <- table_info$contents[start_row + 1]
   if (table_info$booktabs) {
-    new_rowtext <- paste0(
+    pre_rowtext <- paste0(
       "\\\\addlinespace[", gap_space, "]\n",
-      "\\\\multicolumn{", table_info$ncol, "}{l}{\\\\textbf{", group_label,
-      "}}\\\\\\\\\n",
-      rowtext
+      ifelse(hline_before,"\\\\hline\n", ""),
+      "\\\\multicolumn{", ifelse(is.null(colnum),
+                                 table_info$ncol,
+                                 colnum),
+      "}{", latex_align, "}{", group_label,
+      "}\\\\\\\\\n", ifelse(hline_after, "\\\\hline\n", '')
     )
   } else {
     rowtext <- paste0("\\\\hline\n", rowtext)
-    new_rowtext <- paste0(
-      "\\\\hline\n\\\\multicolumn{", table_info$ncol, "}{l}{\\\\textbf{",
-      group_label, "}}\\\\\\\\\n", rowtext
+    pre_rowtext <- paste0(
+      "\\\\hline\n\\\\multicolumn{", table_info$ncol, "}{", latex_align,"}{",
+      group_label, "}\\\\\\\\\n"
     )
   }
+  if(!is.null(extra_latex_after)){
+    pre_rowtext <- paste0(pre_rowtext,
+                      regex_escape(extra_latex_after, double_backslash = TRUE))
+  }
+  new_rowtext <- paste0(pre_rowtext, rowtext)
   out <- sub(rowtext, new_rowtext, out)
   out <- gsub("\\\\addlinespace\n", "", out)
   out <- structure(out, format = "latex", class = "knitr_kable")

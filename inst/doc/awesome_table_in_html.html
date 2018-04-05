@@ -11,7 +11,7 @@
 
 <meta name="author" content="Hao Zhu" />
 
-<meta name="date" content="2018-01-15" />
+<meta name="date" content="2018-04-05" />
 
 <title>Create Awesome HTML Table with knitr::kable and kableExtra</title>
 
@@ -219,7 +219,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Create Awesome HTML Table with knitr::kable and kableExtra</h1>
 <h4 class="author"><em>Hao Zhu</em></h4>
-<h4 class="date"><em>2018-01-15</em></h4>
+<h4 class="date"><em>2018-04-05</em></h4>
 
 </div>
 
@@ -2102,7 +2102,8 @@ Merc 280
 <p>This package also comes with a few helper functions, including <code>spec_color</code>, <code>spec_font_size</code> &amp; <code>spec_angle</code>. These functions can rescale continuous variables to certain scales. For example, function <code>spec_color</code> would map a continuous variable to any <a href="https://CRAN.R-project.org/package=viridisLite">viridis color palettes</a>. It offers a very visually impactful representation in a tabular format.</p>
 <pre class="r"><code>iris[1:10, ] %&gt;%
   mutate_if(is.numeric, function(x) {
-    cell_spec(x, &quot;html&quot;, bold = T, color = spec_color(x, end = 0.9),
+    cell_spec(x, &quot;html&quot;, bold = T, 
+              color = spec_color(x, end = 0.9),
               font_size = spec_font_size(x))
   }) %&gt;%
   mutate(Species = cell_spec(
@@ -2436,12 +2437,12 @@ mtcars[1:5, 1:4] %&gt;%
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Hello
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 World
 </div>
@@ -2568,17 +2569,17 @@ Hornet Sportabout
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 1
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 2
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 3
 </div>
@@ -2736,7 +2737,7 @@ Hornet Sportabout
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="6">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="6">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 6
 </div>
@@ -2745,12 +2746,12 @@ Group 6
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="4">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 4
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 5
 </div>
@@ -2759,17 +2760,17 @@ Group 5
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 1
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 2
 </div>
 </th>
-<th style="text-align:center; border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;" colspan="2">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">
 Group 3
 </div>
@@ -3125,7 +3126,7 @@ Duster 360
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Merc 240D
 </td>
 <td style="text-align:right;">
@@ -3148,7 +3149,7 @@ Merc 240D
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Merc 230
 </td>
 <td style="text-align:right;">
@@ -3171,7 +3172,7 @@ Merc 230
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Merc 280
 </td>
 <td style="text-align:right;">
@@ -3282,7 +3283,7 @@ Mazda RX4 Wag
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Datsun 710
 </td>
 <td style="text-align:right;">
@@ -3305,7 +3306,7 @@ Datsun 710
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Hornet 4 Drive
 </td>
 <td style="text-align:right;">
@@ -3328,7 +3329,7 @@ Hornet 4 Drive
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Hornet Sportabout
 </td>
 <td style="text-align:right;">
@@ -3386,7 +3387,7 @@ wt
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Mazda RX4
 </td>
 <td style="text-align:right;">
@@ -3432,7 +3433,7 @@ Mazda RX4 Wag
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Datsun 710
 </td>
 <td style="text-align:right;">
@@ -3478,7 +3479,7 @@ Hornet 4 Drive
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left: 2em;" indentLevel="1">
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
 Hornet Sportabout
 </td>
 <td style="text-align:right;">
@@ -3551,7 +3552,7 @@ c
 2
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3559,7 +3560,7 @@ c
 3
 </td>
 <td style="text-align:center;">
-1
+0
 </td>
 </tr>
 <tr>
@@ -3575,7 +3576,7 @@ c
 5
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3602,7 +3603,7 @@ d
 8
 </td>
 <td style="text-align:center;">
-0
+1
 </td>
 </tr>
 <tr>
@@ -3659,7 +3660,7 @@ d
 14
 </td>
 <td style="text-align:center;">
-1
+0
 </td>
 </tr>
 <tr>
