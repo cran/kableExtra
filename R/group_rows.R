@@ -162,8 +162,8 @@ group_rows_latex <- function(kable_input, group_label, start_row, end_row,
   }
   if (italic) group_label <- paste0("\\\\textit{", group_label, "}")
   # Add group label
-  rowtext <- table_info$contents[start_row + 1]
   if (table_info$booktabs) {
+    rowtext <- table_info$contents[start_row + table_info$position_offset]
     pre_rowtext <- paste0(
       "\\\\addlinespace[", gap_space, "]\n",
       ifelse(hline_before,"\\\\hline\n", ""),
@@ -174,6 +174,7 @@ group_rows_latex <- function(kable_input, group_label, start_row, end_row,
       "}\\\\\\\\\n", ifelse(hline_after, "\\\\hline\n", '')
     )
   } else {
+    rowtext <- table_info$contents[start_row + 1]
     rowtext <- paste0("\\\\hline\n", rowtext)
     pre_rowtext <- paste0(
       "\\\\hline\n\\\\multicolumn{", table_info$ncol, "}{", latex_align,"}{",
@@ -192,4 +193,20 @@ group_rows_latex <- function(kable_input, group_label, start_row, end_row,
   attr(out, "kable_meta") <- table_info
   out <- add_indent_latex(out, seq(start_row, end_row))
   return(out)
+}
+
+#' Automatically figuring out the group_row index
+#'
+#' @description This helper function allows users to build the `group_row`
+#' index more quickly and use `group_rows` in a way that is similar with
+#' `collapse_rows`.
+#'
+#' @param x The index column. A vector. For example `c("a", "a", "b", "b", "b")``
+#'
+#' @export
+auto_index <- function(x) {
+  x_rle <- rle(x)
+  index <- x_rle$lengths
+  names(index) <- x_rle$values
+  return(index)
 }

@@ -4,7 +4,8 @@ library(kableExtra)
 dt <- mtcars[1:5, 1:6]
 
 ## ------------------------------------------------------------------------
-options(knitr.table.format = "latex") 
+# If you are using kableExtra < 0.9.0, you are recommended to set a global option first.
+# options(knitr.table.format = "latex") 
 ## If you don't define format here, you'll need put `format = "latex"` 
 ## in every kable function.
 
@@ -14,51 +15,52 @@ options(knitr.table.format = "latex")
 #  library(kableExtra)
 
 ## ------------------------------------------------------------------------
-# As I said, you don't need format = "latex" if you have defined 
-# knitr.table.format in options.
-kable(dt, format = "latex")
+# Again, with kableExtra >= 0.9.0, `format = "latex"` is automatically defined
+# when this package gets loaded. Otherwise, you still need to define formats
+kable(dt)
+# Same: kable(dt, "latex")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T)
+kable(dt, "latex", booktabs = T)
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(latex_options = "striped")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", caption = "Demo table", booktabs = T) %>%
+kable(dt, "latex", caption = "Demo table", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
 
 ## ------------------------------------------------------------------------
-kable(cbind(dt, dt, dt), format = "latex", booktabs = T) %>%
+kable(cbind(dt, dt, dt), "latex", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down"))
 
 ## ------------------------------------------------------------------------
-kable(cbind(dt), format = "latex", booktabs = T) %>%
+kable(cbind(dt), "latex", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down"))
 
 ## ------------------------------------------------------------------------
 long_dt <- rbind(mtcars, mtcars) 
 
-kable(long_dt, format = "latex", longtable = T, booktabs = T, caption = "Longtable") %>%
+kable(long_dt, "latex", longtable = T, booktabs = T, caption = "Longtable") %>%
   add_header_above(c(" ", "Group 1" = 5, "Group 2" = 6)) %>%
   kable_styling(latex_options = c("repeat_header"))
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(full_width = T) %>%
   column_spec(1, width = "8cm")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(position = "center")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(position = "float_right")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(font_size = 7)
 
 ## ------------------------------------------------------------------------
@@ -71,20 +73,20 @@ text_tbl <- data.frame(
   )
 )
 
-kable(text_tbl, format = "latex", booktabs = T) %>%
+kable(text_tbl, "latex", booktabs = T) %>%
   kable_styling(full_width = F) %>%
   column_spec(1, bold = T, color = "red") %>%
   column_spec(2, width = "30em")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(7, border_left = T, bold = T) %>%
   row_spec(1, strikeout = T) %>%
   row_spec(3:5, bold = T, color = "white", background = "black")
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T, align = "c") %>%
+kable(dt, "latex", booktabs = T, align = "c") %>%
   kable_styling(latex_options = "striped", full_width = F) %>%
   row_spec(0, angle = 45)
 
@@ -128,29 +130,29 @@ text_formatted <- paste(
 # To display the text, type `r text_formatted` outside of the chunk
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling() %>%
   add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   kable_styling(latex_options = "striped") %>%
   add_header_above(c(" ", "Group 1" = 2, "Group 2" = 2, "Group 3" = 2)) %>%
   add_header_above(c(" ", "Group 4" = 4, "Group 5" = 2)) %>%
   add_header_above(c(" ", "Group 6" = 6), bold = T, italic = T)
 
 ## ------------------------------------------------------------------------
-kable(mtcars[1:10, 1:6], format = "latex", caption = "Group Rows", booktabs = T) %>%
+kable(mtcars[1:10, 1:6], "latex", caption = "Group Rows", booktabs = T) %>%
   kable_styling() %>%
   group_rows("Group 1", 4, 7) %>%
   group_rows("Group 2", 8, 10)
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   group_rows("Group 1", 4, 5, latex_gap_space = "2em")
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  kable(mtcars[1:10, 1:6], format = "latex", caption = "Group Rows", booktabs = T) %>%
+#  kable(mtcars[1:10, 1:6], "latex", caption = "Group Rows", booktabs = T) %>%
 #    kable_styling() %>%
 #    group_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
 #  # Not evaluated. The code above should have the same result as the first example in this section.
@@ -163,7 +165,7 @@ kable(dt, format = "latex", booktabs = T) %>%
 #  # ...
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", booktabs = T) %>%
+kable(dt, "latex", booktabs = T) %>%
   add_indent(c(1, 3, 5))
 
 ## ------------------------------------------------------------------------
@@ -171,14 +173,15 @@ collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
                  C2 = c(rep("c", 7), rep("d", 3), rep("c", 2), rep("d", 3)),
                  C3 = 1:15,
                  C4 = sample(c(0,1), 15, replace = TRUE))
-kable(collapse_rows_dt, format = "latex", booktabs = T, align = "c") %>%
+kable(collapse_rows_dt, "latex", booktabs = T, align = "c") %>%
   column_spec(1, bold=T) %>%
-  collapse_rows(columns = 1:2, latex_hline = "major")
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")
 
 ## ------------------------------------------------------------------------
-kable(collapse_rows_dt, format = "latex", align = "c") %>%
+kable(collapse_rows_dt[-1], "latex", align = "c", booktabs = T) %>%
   column_spec(1, bold = T, width = "5em") %>%
-  collapse_rows(1:2)
+  row_spec(c(1:7, 11:12) - 1, extra_latex_after = "\\rowcolor{gray!6}") %>%
+  collapse_rows(1, latex_hline = "none")
 
 ## ------------------------------------------------------------------------
 collapse_rows_dt <- expand.grid(
@@ -191,7 +194,7 @@ collapse_rows_dt <- expand.grid(
   mutate(C1 = rnorm(n()),
          C2 = rnorm(n()))
 
-kable(collapse_rows_dt, format = "latex", 
+kable(collapse_rows_dt, "latex", 
       booktabs = T, align = "c", linesep = '') %>%
   collapse_rows(1:3, row_group_label_position = 'stack') 
 
@@ -200,7 +203,7 @@ row_group_label_fonts <- list(
   list(bold = T, italic = T), 
   list(bold = F, italic = F)
   )
-kable(collapse_rows_dt, format = "latex", 
+kable(collapse_rows_dt, "latex", 
                      booktabs = T, align = "c", linesep = '') %>%
   column_spec(1, bold=T) %>%
   collapse_rows(1:3, latex_hline = 'custom', custom_latex_hline = 1:3, 
@@ -224,7 +227,7 @@ kable(dt, "latex", align = "c", booktabs = T) %>%
            symbol = c("Footnote Symbol 1; ", "Footnote Symbol 2"),
            general_title = "General: ", number_title = "Type I: ",
            alphabet_title = "Type II: ", symbol_title = "Type III: ",
-           footnote_as_chunk = T
+           footnote_as_chunk = T, title_format = c("italic", "underline")
            )
 
 ## ------------------------------------------------------------------------
@@ -259,7 +262,7 @@ dt_lb %>%
         col.names = linebreak(c("Item\n(Name)", "Value\n(Number)"), align = "c"))
 
 ## ------------------------------------------------------------------------
-kable(dt, format = "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
+kable(dt, "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
   kable_styling(latex_options = c("hold_position")) %>%
   add_header_above(c(" ", "Group 1[note]" = 3, "Group 2[note]" = 3)) %>%
   add_footnote(c("This table is from mtcars", 

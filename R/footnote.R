@@ -29,6 +29,9 @@
 #' @param number_title Section header for number footnotes. Default is "".
 #' @param alphabet_title Section header for alphabet footnotes. Default is "".
 #' @param symbol_title Section header for symbol footnotes. Default is "".
+#' @param title_format Choose from "italic"(default), "bold" and "underline".
+#' Multiple options are possible.
+#'
 #'
 #' @examples dt <- mtcars[1:5, 1:5]
 #' footnote(knitr::kable(dt, "html"), alphabet = c("Note a", "Note b"))
@@ -47,7 +50,8 @@ footnote <- function(kable_input,
                      general_title = "Note: ",
                      number_title = "",
                      alphabet_title = "",
-                     symbol_title = ""
+                     symbol_title = "",
+                     title_format = "italic"
 ) {
   kable_format <- attr(kable_input, "format")
   if (!kable_format %in% c("html", "latex")) {
@@ -89,6 +93,10 @@ footnote <- function(kable_input,
       footnote_titles <- lapply(footnote_titles, linebreak)
     }
   }
+  title_format <- match.arg(title_format, c("italic", "bold", "underline"),
+                            several.ok = TRUE)
+  footnote_titles <- lapply(footnote_titles, footnote_title_format,
+                            kable_format, title_format)
   footnote_table <- footnote_table_maker(
     kable_format, footnote_titles, footnote_contents
   )
@@ -98,6 +106,36 @@ footnote <- function(kable_input,
   if (kable_format == "latex") {
     return(footnote_latex(kable_input, footnote_table, footnote_as_chunk,
                           threeparttable))
+  }
+}
+
+footnote_title_format <- function(x, format, title_format) {
+  if (x == "") return(x)
+  if (format == "html") {
+    title_style <- ""
+    if ("italic" %in% title_format) {
+      title_style <- paste0(title_style, "font-style: italic;")
+    }
+    if ("bold" %in% title_format) {
+      title_style <- paste0(title_style, "font-weight: bold;")
+    }
+    if ("underline" %in% title_format) {
+      title_style <- paste0(title_style, "text-decoration: underline;")
+    }
+    return(paste0(
+      '<span style="', title_style, '">', x, '</span>'
+    ))
+  } else {
+    if ("italic" %in% title_format) {
+      x <- paste0("\\\\textit\\{", x, "\\}")
+    }
+    if ("bold" %in% title_format) {
+      x <- paste0("\\\\textbf\\{", x, "\\}")
+    }
+    if ("underline" %in% title_format) {
+      x <- paste0("\\\\underline\\{", x, "\\}")
+    }
+    return(x)
   }
 }
 
@@ -175,7 +213,7 @@ html_tfoot_maker_ <- function(ft_contents, ft_title, ft_type, ft_chunk) {
     paste0('<sup>', x[1], '</sup> ', x[2])
   })
   if (ft_title != "") {
-    title_text <- paste0('<strong>', ft_title, '</strong>')
+    title_text <- ft_title
     footnote_text <- c(title_text, footnote_text)
   }
   if (!ft_chunk) {
@@ -206,7 +244,7 @@ footnote_latex <- function(kable_input, footnote_table, footnote_as_chunk,
       out <- sub(paste0("\\\\begin\\{", table_info$tabular, "\\}"),
                  paste0("\\\\begin{ThreePartTable}\n\\\\begin{TableNotes}",
                         ifelse(footnote_as_chunk, "[para]", ""),
-                        "\n\\\\small\n", footnote_text,
+                        "\n", footnote_text,
                         "\n\\\\end{TableNotes}\n\\\\begin{",
                         table_info$tabular, "}"),
                  out)
@@ -234,7 +272,7 @@ footnote_latex <- function(kable_input, footnote_table, footnote_as_chunk,
                  paste0("\\\\end{", table_info$tabular,
                         "}\n\\\\begin{tablenotes}",
                         ifelse(footnote_as_chunk, "[para]", ""),
-                        "\n\\\\small\n", footnote_text,
+                        "\n", footnote_text,
                         "\n\\\\end{tablenotes}\n\\\\end{threeparttable}"),
                  out)
     }
@@ -284,7 +322,7 @@ latex_tfoot_maker_ <- function(ft_contents, ft_title, ft_chunk, ncol) {
     }
   })
   if (ft_title != "") {
-    title_text <- paste0('\\\\textbf{', ft_title, '} ')
+    title_text <- ft_title
     footnote_text <- c(title_text, footnote_text)
   }
   if (!ft_chunk) {
@@ -310,7 +348,7 @@ latex_tfoot_maker_tpt_ <- function(ft_contents, ft_title, ft_chunk, ncol) {
     }
   })
   if (ft_title != "") {
-    title_text <- paste0('\\\\item \\\\textbf{', ft_title, '} ')
+    title_text <- paste0('\\\\item ', ft_title, ' ')
     footnote_text <- c(title_text, footnote_text)
   }
   footnote_text <- paste0(footnote_text, collapse = "\n")

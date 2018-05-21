@@ -281,15 +281,24 @@ pdfTable_styling <- function(kable_input,
 styling_latex_striped <- function(x, table_info, color) {
   # gray!6 is the same as shadecolor ({RGB}{248, 248, 248}) in pdf_document
   if (table_info$tabular == "longtable" & !is.na(table_info$caption)) {
-    row_color <- sprintf("\\rowcolors{2}{white}{%s}", color)
+    row_color <- sprintf("\\rowcolors{%s}{white}{%s}",
+                         1 + table_info$position_offset, color)
   } else {
-    row_color <- sprintf("\\rowcolors{2}{%s}{white}", color)
+    if (table_info$position_offset == 0) {
+      row_color <- sprintf("\\rowcolors{1}{white}{%s}", color)
+    } else {
+      row_color <- sprintf("\\rowcolors{2}{%s}{white}", color)
+    }
   }
 
   x <- read_lines(x)
   if (table_info$booktabs) {
     header_rows_start <- which(x == "\\toprule")[1]
-    header_rows_end <- which(x == "\\midrule")[1]
+    if (is.null(table_info$colnames)) {
+      header_rows_end <- header_rows_start
+    } else {
+      header_rows_end <- which(x == "\\midrule")[1]
+    }
   } else {
     header_rows_start <- which(x == "\\hline")[1]
     header_rows_end <- which(x == "\\hline")[2]
@@ -332,7 +341,7 @@ styling_latex_scale_down <- function(x, table_info) {
     return(x)
   }
   x <- sub(table_info$begin_tabular,
-           paste0("\\\\resizebox\\{\\\\linewidth\\}\\{\\!\\}\\{",
+           paste0("\\\\resizebox\\{\\\\linewidth\\}\\{\\!\\}\\{\n",
                   table_info$begin_tabular),
            x)
   sub(table_info$end_tabular, paste0(table_info$end_tabular, "\\}"), x)
@@ -344,7 +353,11 @@ styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
   x <- read_lines(x)
   if (table_info$booktabs) {
     header_rows_start <- which(x == "\\toprule")[1]
-    header_rows_end <- which(x == "\\midrule")[1]
+    if (is.null(table_info$colnames)) {
+      header_rows_end <- header_rows_start
+    } else {
+      header_rows_end <- which(x == "\\midrule")[1]
+    }
   } else {
     header_rows_start <- which(x == "\\hline")[1]
     header_rows_end <- which(x == "\\hline")[2]
@@ -465,13 +478,13 @@ styling_latex_position_float <- function(x, table_info, option) {
   col_max_length <- apply(size_matrix, 1, max) + 4
   if (table_info$table_env) {
     option <- sprintf("\\\\begin\\{wraptable\\}\\{%s\\}", option)
-    option <- paste0(option, "\\{",sum(col_max_length) * 0.15, "cm\\}")
+    option <- paste0(option, "\\{0pt\\}")
     x <- sub("\\\\begin\\{table\\}\\[\\!h\\]", "\\\\begin\\{table\\}", x)
     x <- sub("\\\\begin\\{table\\}", option, x)
     x <- sub("\\\\end\\{table\\}", "\\\\end\\{wraptable\\}", x)
   } else {
     option <- sprintf("\\begin{wraptable}{%s}", option)
-    option <- paste0(option, "{",sum(col_max_length) * 0.15, "cm}")
+    option <- paste0(option, "{0pt}")
     x <- paste0(option, x, "\\end{wraptable}")
   }
   return(x)

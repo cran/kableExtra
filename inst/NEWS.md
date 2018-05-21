@@ -1,3 +1,41 @@
+kableExtra 0.9.0
+--------------------------------------------------------------------------------
+* Major Change: Now when you load `kableExtra` package, it will automatically 
+set format for `kable()` based on the working environment: only if you are using
+rmarkdown/r sweave to render PDFs, the default format will be set to "latex". 
+Otherwise it will be set to "html".
+
+* Major Change: Now `kableExtra` will try to load the table section of the 
+bootstrap stylesheet when you are rendering slidy_presentation & 
+ioslides_presentation. You can also choose to load it manually via the
+global option `kableExtra.html.bsTable`.
+
+* Added support to the `tables` package. (Thank you @dmurdoch)
+
+* Added a save_kable function to save HTML table as independent HTML pages. 
+
+* Added min_width and max_width to column_spec.
+
+* Added documentation about 100% width in scroll_box (Thank you @isteves!)
+
+* Added `include_thead` to `column_spec`. (#177)
+
+* Fixed a few bugs in `linebreak` (#167, #180)
+
+* Fixed a bug when there is no column header row in LaTeX (Thank you @leovan)
+
+* Fixed header formatting for repeated header row in latex longtable (#183)
+
+* Removed the \small tag in threeparttable (#162)
+
+* Added valign to collapse_rows to adjust vertical position of the contents. 
+Change default setting from middle to top. (#191)
+
+* Added an auto_index function to facilitate group_rows. (#193) 
+
+* Added a title_format option to footnote and changed default format from 
+bold to italic. (#200)
+
 kableExtra 0.8.0
 --------------------------------------------------------------------------------
 * Now kableExtra imports & exports knitr::kable so users don't need to load knitr entirely to NAMESPACE when it's not necessary, for example, in shiny. 
@@ -239,7 +277,6 @@ kableExtra 0.2.0
 * Added an example for how to use it in Shiny.
 
 * Fixed a few errors in the LaTeX vignette file.
-
 
 kableExtra 0.1.0
 --------------------------------------------------------------------------------

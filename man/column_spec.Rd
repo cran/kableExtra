@@ -7,7 +7,8 @@
 column_spec(kable_input, column, width = NULL, bold = FALSE,
   italic = FALSE, monospace = FALSE, underline = FALSE,
   strikeout = FALSE, color = NULL, background = NULL,
-  border_left = FALSE, border_right = FALSE, extra_css = NULL)
+  border_left = FALSE, border_right = FALSE, width_min = NULL,
+  width_max = NULL, extra_css = NULL, include_thead = FALSE)
 }
 \arguments{
 \item{kable_input}{Output of \code{knitr::kable()} with \code{format} specified}
@@ -46,8 +47,19 @@ in a character string for the CSS of the border line}
 border line on the right of the selected column. In HTML, you can also pass
 in a character string for the CSS of the border line}
 
+\item{width_min}{Only for HTML table. Normal column width will automatically
+collapse when the window cannot hold enough contents. With this \code{width_min},
+you can set up a column with a width that won't collapse even when the
+window is not wide enough.}
+
+\item{width_max}{Only for HTML table. \code{width_max} defines the maximum width
+of table columns.}
+
 \item{extra_css}{Extra css text to be passed into the cells of the row. Note
 that it's not for the whole column but to each individual cells}
+
+\item{include_thead}{T/F. A HTML only feature to contoll whether the
+header row will be manipulated. Default is \code{FALSE}.}
 }
 \description{
 This function allows users to select a column and then specify
