@@ -240,3 +240,9 @@ kable(cbind(mtcars, mtcars)) %>%
 #    kable_styling() %>%
 #    save_kable(file = "table1.html", self_contained = T)
 
+## ---- eval=F-------------------------------------------------------------
+#  # Not evaluating
+#  xtable::xtable(mtcars[1:4, 1:4], caption = "Hello xtable") %>%
+#    xtable2kable() %>%
+#    column_spec(1, color = "red")
+

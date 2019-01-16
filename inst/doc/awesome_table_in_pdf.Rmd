@@ -11,7 +11,6 @@ header-includes:
   - \usepackage{longtable}
   - \usepackage{array}
   - \usepackage{multirow}
-  - \usepackage[table]{xcolor}
   - \usepackage{wrapfig}
   - \usepackage{float}
   - \usepackage{colortbl}
@@ -21,6 +20,7 @@ header-includes:
   - \usepackage{threeparttablex}
   - \usepackage[normalem]{ulem}
   - \usepackage{makecell}
+  - \usepackage{xcolor}
 vignette: >
   %\VignetteIndexEntry{Create Awesome PDF Table with knitr::kable and kableExtra}
   %\VignetteEngine{knitr::rmarkdown}
@@ -37,7 +37,7 @@ vignette: >
 \end{wrapfigure}
 The goal of `kableExtra` is to help you build common complex tables and manipulate table styles. It imports the pipe `%>%` symbol from `magrittr` and verbalizes all the functions, so basically you can add "layers" to a kable output in a way that is similar with `ggplot2` and `plotly`.
 
-To learn how to generate complex tables in LaTeX, please visit [http://haozhu233.github.io/kableExtra/awesome_table_in_html.html](http://haozhu233.github.io/kableExtra/awesome_table_in_html.html).
+To learn how to generate complex tables in HTML, please visit [http://haozhu233.github.io/kableExtra/awesome_table_in_html.html](http://haozhu233.github.io/kableExtra/awesome_table_in_html.html).
 
 # Installation
 ```r
@@ -50,6 +50,10 @@ devtools::install_github("haozhu233/kableExtra")
 
 # Getting Started
 Here we are using the first few columns and rows from dataset `mtcars`
+```{r, echo = F}
+options(kableExtra.latex.load_packages = F)
+```
+
 ```{r}
 library(knitr)
 library(kableExtra)
@@ -87,7 +91,6 @@ header-includes:
   - \usepackage{longtable}
   - \usepackage{array}
   - \usepackage{multirow}
-  - \usepackage[table]{xcolor}
   - \usepackage{wrapfig}
   - \usepackage{float}
   - \usepackage{colortbl}
@@ -97,14 +100,17 @@ header-includes:
   - \usepackage{threeparttablex}
   - \usepackage[normalem]{ulem}
   - \usepackage{makecell}
+  - \usepackage{xcolor}
 ```
+
+Note: `kableExtra` was using `xcolor` for alternative row color before 1.0. However, the recent updates in `fancyvbr` causes a clash in `xcolor` option. Therefore, we removed the `xcolor` dependency in version 1.0 and started to rely on `colortbl` completely. If you experience any issues, please report on github. 
 
 ## Plain LaTeX
 Plain LaTeX table looks relatively ugly in 2017.
 ```{r}
 # Again, with kableExtra >= 0.9.0, `format = "latex"` is automatically defined
 # when this package gets loaded. Otherwise, you still need to define formats
-kable(dt)
+kable(dt, "latex")
 # Same: kable(dt, "latex")
 ```
 
@@ -525,3 +531,13 @@ Since the structure of `kable` is relatively simple, it shouldn't be too difficu
 
 ## `tables`
 The latest version of [`tables`](https://CRAN.R-project.org/package=tables) comes with a `toKable()` function, which is compatiable with functions in `kableExtra` (>=0.9.0).
+
+## `xtable`
+For `xtable` users, if you want to use `kableExtra` functions on that, check out this `xtable2kable()` function shipped with kableExtra 1.0. 
+
+```{r, eval=F}
+# Not evaluating
+xtable::xtable(mtcars[1:4, 1:4], caption = "Hello xtable") %>%
+  xtable2kable() %>%
+  column_spec(1, color = "red")
+```

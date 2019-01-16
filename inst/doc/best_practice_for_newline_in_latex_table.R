@@ -23,6 +23,7 @@ dt2 <- data.frame(
 dt2 %>%
   mutate_all(linebreak) %>%
   kable("latex", booktabs = T, escape = F,
+        caption = "Main Title\\\\Subtitle",
         col.names = linebreak(c("Item\n(Name)", "Value\n(Number)"), align = "c"))
 
 ## ------------------------------------------------------------------------

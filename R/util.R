@@ -45,7 +45,7 @@ positions_corrector <- function(positions, group_header_rows, n_row) {
 }
 
 latex_row_cells <- function(x) {
-  strsplit(x, " \\& ")
+  stringr::str_split(x, " \\& ")
 }
 
 regex_escape <- function(x, double_backslash = FALSE) {
@@ -68,10 +68,6 @@ regex_escape <- function(x, double_backslash = FALSE) {
 }
 
 as_kable_xml <- function(x) {
-  # tmp <- tempfile(fileext = ".xml")
-  # write_xml(x, tmp, options = c("no_declaration", "format_whitespace", "as_html"))
-  # out <- read_file(tmp)
-  # out <- structure(out, format = "html", class = "knitr_kable")
   out <- structure(as.character(x), format = "html", class = "knitr_kable")
   return(out)
 }
@@ -104,7 +100,6 @@ latex_pkg_list <- function() {
     "\\usepackage{longtable}",
     "\\usepackage{array}",
     "\\usepackage{multirow}",
-    "\\usepackage[table]{xcolor}",
     "\\usepackage{wrapfig}",
     "\\usepackage{float}",
     "\\usepackage{colortbl}",
@@ -113,7 +108,10 @@ latex_pkg_list <- function() {
     "\\usepackage{threeparttable}",
     "\\usepackage{threeparttablex}",
     "\\usepackage[normalem]{ulem}",
-    "\\usepackage{makecell}"
+    "\\usepackage[normalem]{ulem}",
+    "\\usepackage[utf8]{inputenc}",
+    "\\usepackage{makecell}",
+    "\\usepackage{xcolor}"
   ))
 }
 
@@ -140,7 +138,10 @@ fix_duplicated_rows_latex <- function(kable_input, table_info) {
 
 # Solve enc issue for LaTeX tables
 solve_enc <- function(x) {
-  enc2utf8(as.character(base::format(x, trim = TRUE, justify = 'none')))
+  #may behave differently based on Sys.setlocale settings with respect to characters
+  out <- enc2utf8(as.character(base::format(x, trim = TRUE, justify = 'none')))
+  mostattributes(out) <- attributes(x)
+  return(out)
 }
 
 input_escape <- function(x, latex_align) {

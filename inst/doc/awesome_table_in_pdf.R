@@ -1,3 +1,6 @@
+## ---- echo = F-----------------------------------------------------------
+options(kableExtra.latex.load_packages = F)
+
 ## ------------------------------------------------------------------------
 library(knitr)
 library(kableExtra)
@@ -17,7 +20,7 @@ dt <- mtcars[1:5, 1:6]
 ## ------------------------------------------------------------------------
 # Again, with kableExtra >= 0.9.0, `format = "latex"` is automatically defined
 # when this package gets loaded. Otherwise, you still need to define formats
-kable(dt)
+kable(dt, "latex")
 # Same: kable(dt, "latex")
 
 ## ------------------------------------------------------------------------
@@ -284,4 +287,10 @@ kable(dt, "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
 #  kable(dt, "latex", booktabs = T) %>%
 #    column_spec(1, bold = T) %>%
 #    kable_as_image("my_latex_table")
+
+## ---- eval=F-------------------------------------------------------------
+#  # Not evaluating
+#  xtable::xtable(mtcars[1:4, 1:4], caption = "Hello xtable") %>%
+#    xtable2kable() %>%
+#    column_spec(1, color = "red")
 

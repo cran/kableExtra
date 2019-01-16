@@ -5,7 +5,6 @@
     usepackage_latex("longtable")
     usepackage_latex("array")
     usepackage_latex("multirow")
-    usepackage_latex("xcolor", "table")
     usepackage_latex("wrapfig")
     usepackage_latex("float")
     usepackage_latex("colortbl")
@@ -15,6 +14,7 @@
     usepackage_latex("threeparttablex")
     usepackage_latex("ulem", "normalem")
     usepackage_latex("makecell")
+    usepackage_latex("xcolor")
   }
   auto_format <- getOption("kableExtra.auto_format", default = TRUE)
   if (auto_format) auto_set_format()
@@ -23,5 +23,9 @@
         "ioslides_presentation", "slidy_presentation"
       )) {
     options(kableExtra.html.bsTable = TRUE)
+  }
+  if (!is.null(knitr::opts_knit$get("rmarkdown.pandoc.to")) &&
+      knitr::opts_knit$get("rmarkdown.pandoc.to") %in% c("epub3", "epub")) {
+    options(kableExtra.knit_print.dependency = FALSE)
   }
 }

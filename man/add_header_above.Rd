@@ -4,8 +4,11 @@
 \alias{add_header_above}
 \title{Add a header row on top of current header}
 \usage{
-add_header_above(kable_input, header = NULL, bold = FALSE, italic = FALSE,
-  monospace = FALSE, align = "c", escape = TRUE, line = TRUE)
+add_header_above(kable_input, header = NULL, bold = FALSE,
+  italic = FALSE, monospace = FALSE, underline = FALSE,
+  strikeout = FALSE, align = "c", color = NULL, background = NULL,
+  font_size = NULL, angle = NULL, escape = TRUE, line = TRUE,
+  line_sep = 3, extra_css = NULL, include_empty = FALSE)
 }
 \arguments{
 \item{kable_input}{Output of \code{knitr::kable()} with \code{format} specified}
@@ -13,7 +16,7 @@ add_header_above(kable_input, header = NULL, bold = FALSE, italic = FALSE,
 \item{header}{A (named) character vector with \code{colspan} as values. For
 example, \code{c(" " = 1, "title" = 2)} can be used to create a new header row
 for a 3-column table with "title" spanning across column 2 and 3. For
-convenience, when \code{colspan} equals to 1, users can drop the \code{= 1} part.
+convenience, when \code{colspan} equals to 1, users can drop the \code{ = 1} part.
 As a result, \code{c(" ", "title" = 2)} is the same as \code{c(" " = 1, "title" = 2)}.}
 
 \item{bold}{A T/F value to control whether the text should be bolded.}
@@ -23,15 +26,44 @@ As a result, \code{c(" ", "title" = 2)} is the same as \code{c(" " = 1, "title" 
 \item{monospace}{A T/F value to control whether the text of the selected column
 need to be monospaced (verbatim)}
 
+\item{underline}{A T/F value to control whether the text of the selected row
+need to be underlined}
+
+\item{strikeout}{A T/F value to control whether the text of the selected row
+need to be stricked out.}
+
 \item{align}{A character string for cell alignment. For HTML, possible values could
 be \code{l}, \code{c}, \code{r} plus \code{left}, \code{center}, \code{right}, \code{justify}, \code{initial} and \code{inherit}
 while for LaTeX, you can only choose from \code{l}, \code{c} & \code{r}.}
+
+\item{color}{A character string/vector for text color. Here please pay
+attention to the differences in color codes between HTML and LaTeX.}
+
+\item{background}{A character string/vector for background color. Here please
+pay attention to the differences in color codes between HTML and LaTeX. Also
+note that in HTML, background defined in cell_spec won't cover the whole
+cell.}
+
+\item{font_size}{A numeric input/vector for font size. For HTML, you can also use
+options including \code{xx-small}, \code{x-small}, \code{small}, \code{medium}, \code{large},
+\code{x-large}, \code{xx-large}, \code{smaller}, \code{larger}, \code{initial} and \code{inherit}.}
+
+\item{angle}{0-360, degree that the text will rotate.}
 
 \item{escape}{A T/F value showing whether special characters should be
 escaped.}
 
 \item{line}{A T/F value to control whether a line will appear underneath the
 header}
+
+\item{line_sep}{A numeric value indicating how much the midlines should be
+separated by space. Default is 3.}
+
+\item{extra_css}{An HTML only option. CSS defined here will be send to the
+td cell.}
+
+\item{include_empty}{Whether empty cells in HTML should also be styled.
+Default is FALSE.}
 }
 \description{
 Tables with multiple rows of header rows are extremely useful
