@@ -1,7 +1,7 @@
 Package: kableExtra
 Type: Package
 Title: Construct Complex Table with 'kable' and Pipe Syntax
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person('Hao', 'Zhu', email = 'haozhu233@gmail.com', role = c('aut', 'cre'),
     comment = c(ORCID = '0000-0002-3386-6076')),
@@ -38,7 +38,7 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2019-01-15 23:16:30 UTC; haozhu
+Packaged: 2019-01-22 08:01:16 UTC; haozhu
 Author: Hao Zhu [aut, cre] (<https://orcid.org/0000-0002-3386-6076>),
   Thomas Travison [ctb],
   Timothy Tsai [ctb],
@@ -54,4 +54,4 @@ Author: Hao Zhu [aut, cre] (<https://orcid.org/0000-0002-3386-6076>),
   Duncan Murdoch [ctb]
 Maintainer: Hao Zhu <haozhu233@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-01-16 09:10:03 UTC
+Date/Publication: 2019-01-22 09:00:03 UTC
