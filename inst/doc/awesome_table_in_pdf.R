@@ -31,6 +31,10 @@ kable(dt, "latex", booktabs = T) %>%
   kable_styling(latex_options = "striped")
 
 ## ------------------------------------------------------------------------
+kable(mtcars[1:8, 1:4], "latex", booktabs = T, linesep = "") %>%
+  kable_styling(latex_options = "striped", stripe_index = c(1,2, 5:6))
+
+## ------------------------------------------------------------------------
 kable(dt, "latex", caption = "Demo table", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
 
@@ -147,17 +151,17 @@ kable(dt, "latex", booktabs = T) %>%
 ## ------------------------------------------------------------------------
 kable(mtcars[1:10, 1:6], "latex", caption = "Group Rows", booktabs = T) %>%
   kable_styling() %>%
-  group_rows("Group 1", 4, 7) %>%
-  group_rows("Group 2", 8, 10)
+  pack_rows("Group 1", 4, 7) %>%
+  pack_rows("Group 2", 8, 10)
 
 ## ------------------------------------------------------------------------
 kable(dt, "latex", booktabs = T) %>%
-  group_rows("Group 1", 4, 5, latex_gap_space = "2em")
+  pack_rows("Group 1", 4, 5, latex_gap_space = "2em")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  kable(mtcars[1:10, 1:6], "latex", caption = "Group Rows", booktabs = T) %>%
 #    kable_styling() %>%
-#    group_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
+#    pack_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
 #  # Not evaluated. The code above should have the same result as the first example in this section.
 
 ## ---- eval=F-------------------------------------------------------------
@@ -272,7 +276,7 @@ kable(dt, "latex", caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
                  "Group 1 contains mpg, cyl and disp", 
                  "Group 2 contains hp, drat and wt"), 
                notation = "symbol") %>%
-  group_rows("Group 1", 4, 5) %>%
+  pack_rows("Group 1", 4, 5) %>%
   landscape()
 
 ## ---- eval = F-----------------------------------------------------------

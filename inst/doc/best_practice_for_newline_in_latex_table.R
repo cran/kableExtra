@@ -32,5 +32,5 @@ dt2 %>%
   kable("latex", booktabs = T, escape = F,
         col.names = linebreak(c("Item\n(Name)", "Value\n(Number)"), align = "c")) %>%
   add_header_above(c("Combined\nTitle" = 2)) %>%
-  group_rows("Group\n1", 2, 2)
+  pack_rows("Group\n1", 2, 2)
 

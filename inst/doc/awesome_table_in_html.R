@@ -45,6 +45,10 @@ kable(dt) %>%
   kable_styling(bootstrap_options = "striped", font_size = 7)
 
 ## ------------------------------------------------------------------------
+kable(mtcars[1:10, 1:5]) %>%
+  kable_styling(fixed_thead = T)
+
+## ------------------------------------------------------------------------
 text_tbl <- data.frame(
   Items = c("Item 1", "Item 2", "Item 3"),
   Features = c(
@@ -75,13 +79,13 @@ library(dplyr)
 mtcars[1:10, 1:2] %>%
   mutate(
     car = row.names(.),
-    mpg = cell_spec(mpg, color = ifelse(mpg > 20, "red", "blue")),
-    cyl = cell_spec(cyl, color = "white", align = "c", angle = 45, 
+    mpg = cell_spec(mpg, "html", color = ifelse(mpg > 20, "red", "blue")),
+    cyl = cell_spec(cyl, "html", color = "white", align = "c", angle = 45, 
                     background = factor(cyl, c(4, 6, 8), 
                                         c("#666666", "#999999", "#BBBBBB")))
   ) %>%
   select(car, mpg, cyl) %>%
-  kable(escape = F) %>%
+  kable(format = "html", escape = F) %>%
   kable_styling("striped", full_width = F)
 
 ## ------------------------------------------------------------------------
@@ -160,19 +164,30 @@ kable(dt) %>%
 ## ------------------------------------------------------------------------
 kable(mtcars[1:10, 1:6], caption = "Group Rows") %>%
   kable_styling("striped", full_width = F) %>%
-  group_rows("Group 1", 4, 7) %>%
-  group_rows("Group 2", 8, 10)
+  pack_rows("Group 1", 4, 7) %>%
+  pack_rows("Group 2", 8, 10)
 
 ## ---- eval = F-----------------------------------------------------------
 #  # Not evaluated. This example generates the same table as above.
 #  kable(mtcars[1:10, 1:6], caption = "Group Rows") %>%
 #    kable_styling("striped", full_width = F) %>%
-#    group_rows(index = c(" " = 3, "Group 1" = 4, "Group 2" = 3))
+#    pack_rows(index = c(" " = 3, "Group 1" = 4, "Group 2" = 3))
 
 ## ------------------------------------------------------------------------
 kable(dt) %>%
   kable_styling("striped", full_width = F) %>%
-  group_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
+  pack_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
+
+## ---- eval=F-------------------------------------------------------------
+#  # Method 1
+#  pack_rows() # instead of group_rows()
+#  
+#  # Method 2
+#  library(dplyr)
+#  library(kableExtra)
+#  
+#  # Method 3
+#  conflicted::conflict_prefer("group_rows", "kableExtra", "dplyr")
 
 ## ------------------------------------------------------------------------
 kable(dt) %>%
@@ -232,6 +247,7 @@ kable(cbind(mtcars, mtcars)) %>%
 
 ## ------------------------------------------------------------------------
 kable(cbind(mtcars, mtcars)) %>%
+  add_header_above(c("a" = 5, "b" = 18)) %>%
   kable_styling() %>%
   scroll_box(width = "100%", height = "200px")
 
