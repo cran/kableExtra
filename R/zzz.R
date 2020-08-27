@@ -15,7 +15,7 @@
       usepackage_latex("threeparttablex")
       usepackage_latex("ulem", "normalem")
       usepackage_latex("makecell")
-      usepackage_latex("xcolor")
+      # usepackage_latex("xcolor")
     }
   }
   auto_format <- getOption("kableExtra.auto_format", default = TRUE)
@@ -23,7 +23,8 @@
   if (!is.null(rmarkdown::metadata$output) &&
       rmarkdown::metadata$output %in% c(
         "ioslides_presentation", "slidy_presentation",
-        "gitbook", "radix_article"
+        "gitbook", "bookdown::gitbook", "radix_article", "radix::radix_article",
+        "distill_article", "distill::distill_article"
       )) {
     options(kableExtra.html.bsTable = TRUE)
   }

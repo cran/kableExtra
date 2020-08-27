@@ -20,7 +20,7 @@ return "b" in HTML.}
 default value from global option \code{knitr.table.format}.}
 
 \item{double_escape}{T/F if output is in LaTeX, whether it should be double
-escaped. If you are using footnote_marker in \code{group_rows`` labeling row or }add_header_above\code{, you need to set this to be }TRUE`.}
+escaped. If you are using footnote_marker in \verb{group_rows`` labeling row or }add_header_above\verb{, you need to set this to be }TRUE`.}
 }
 \description{
 Put footnote mark in superscription in table. Unless you are
@@ -30,9 +30,11 @@ in \code{kable} (similar with \code{cell_spec}). Again, similar with \code{cell_
 \code{knitr.table.format}.
 }
 \examples{
+\dontrun{
 dt <- mtcars[1:5, 1:5]
 colnames(dt)[1] <- paste0("mpg", footnote_marker_alphabet(2, "html"))
 rownames(dt)[2] <- paste0(rownames(dt)[2], footnote_marker_alphabet(1, "html"))
 footnote(knitr::kable(dt, "html"), alphabet = c("Note a", "Note b"))
+}
 
 }

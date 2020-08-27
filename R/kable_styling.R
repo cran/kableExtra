@@ -10,7 +10,7 @@
 #' Please see package vignette or visit the w3schools'
 #' \href{https://www.w3schools.com/bootstrap/bootstrap_tables.asp}{Bootstrap Page}
 #' for more information. Possible options include `basic`, `striped`,
-#' `bordered`, `hover`, `condensed` and `responsive`.
+#' `bordered`, `hover`, `condensed`, `responsive` and `none`.
 #' @param latex_options A character vector for LaTeX table options. Please see
 #' package vignette for more information. Possible options include
 #' `basic`, `striped`, `hold_position`, `HOLD_position`, `scale_down` & `repeat_header`.
@@ -60,6 +60,16 @@
 #'  on your need.
 #' @param fixed_thead HTML table option so table header row is fixed at top.
 #' Values can be either T/F or `list(enabled = T/F, background = "anycolor")`.
+#' @param htmltable_class Options to use the in-house lightable themes.
+#' Choices include `lightable-minimal`, `lightable-classic`,
+#' `lightable-classic-2`, `lightable-material`, `lightable-striped` and
+#' `lightable-hover`. If you have your customized style sheet loaded which
+#' defines your own table class, you can also load it here.
+#' @param html_font A string for HTML css font. For example,
+#' `html_font = '"Arial Narrow", arial, helvetica, sans-serif'`.
+#' @param wraptable_width Width of the wraptable area if you specify
+#' "float_left/right" for latex table. Default is "0pt" for automated
+#' determination but you may specify it manually.
 #'
 #' @details  For LaTeX, if you use other than English environment
 #' - all tables are converted to 'UTF-8'. If you use, for example, Hungarian
@@ -72,11 +82,14 @@
 #' The LaTeX may not include dollar signs even if they are escaped.
 #' Pandoc's rules for recognizing embedded LaTeX are used.
 #'
-#' @examples x_html <- knitr::kable(head(mtcars), "html")
+#' @examples
+#' \dontrun{
+#' x_html <- knitr::kable(head(mtcars), "html")
 #' kable_styling(x_html, "striped", position = "left", font_size = 7)
 #'
 #' x_latex <- knitr::kable(head(mtcars), "latex")
 #' kable_styling(x_latex, latex_options = "striped", position = "float_left")
+#' }
 #'
 #' @export
 kable_styling <- function(kable_input,
@@ -94,7 +107,10 @@ kable_styling <- function(kable_input,
                           latex_table_env = NULL,
                           protect_latex = TRUE,
                           table.envir = "table",
-                          fixed_thead = FALSE) {
+                          fixed_thead = FALSE,
+                          htmltable_class = NULL,
+                          html_font = NULL,
+                          wraptable_width = '0pt') {
 
   if (length(bootstrap_options) == 1 && bootstrap_options == "basic") {
     bootstrap_options <- getOption("kable_styling_bootstrap_options", "basic")
@@ -129,7 +145,9 @@ kable_styling <- function(kable_input,
                              position = position,
                              font_size = font_size,
                              protect_latex = protect_latex,
-                             fixed_thead = fixed_thead))
+                             fixed_thead = fixed_thead,
+                             htmltable_class = htmltable_class,
+                             html_font = html_font))
   }
   if (kable_format == "latex") {
     if (is.null(full_width)) {
@@ -148,7 +166,8 @@ kable_styling <- function(kable_input,
                             stripe_color = stripe_color,
                             stripe_index = stripe_index,
                             latex_table_env = latex_table_env,
-                            table.envir = table.envir))
+                            table.envir = table.envir,
+                            wraptable_width = wraptable_width))
   }
 }
 
@@ -187,7 +206,9 @@ htmlTable_styling <- function(kable_input,
                                            "float_left", "float_right"),
                               font_size = NULL,
                               protect_latex = TRUE,
-                              fixed_thead = FALSE) {
+                              fixed_thead = FALSE,
+                              htmltable_class = NULL,
+                              html_font = NULL) {
   if (protect_latex) {
     kable_input <- extract_latex_from_kable(kable_input)
   }
@@ -197,7 +218,8 @@ htmlTable_styling <- function(kable_input,
   # Modify class
   bootstrap_options <- match.arg(
     bootstrap_options,
-    c("basic", "striped", "bordered", "hover", "condensed", "responsive"),
+    c("basic", "striped", "bordered", "hover", "condensed", "responsive",
+      "none"),
     several.ok = T
   )
 
@@ -205,15 +227,24 @@ htmlTable_styling <- function(kable_input,
   if (xml_has_attr(kable_xml, "class")) {
     kable_xml_class <- xml_attr(kable_xml, "class")
   }
-  if (length(bootstrap_options) == 1 && bootstrap_options == "basic") {
-    bootstrap_options <- "table"
-  } else {
-    bootstrap_options <- bootstrap_options[bootstrap_options != "basic"]
-    bootstrap_options <- paste0("table-", bootstrap_options)
-    bootstrap_options <- c("table", bootstrap_options)
+
+  if (!is.null(htmltable_class)) {
+    bootstrap_options <- "none"
+    xml_attr(kable_xml, "class") <- paste(kable_xml_class, htmltable_class)
   }
-  xml_attr(kable_xml, "class") <- paste(c(kable_xml_class, bootstrap_options),
-                                        collapse = " ")
+
+  if (length(bootstrap_options) == 1 && bootstrap_options == "none") {
+  }else {
+    if (length(bootstrap_options) == 1 && bootstrap_options == "basic") {
+      bootstrap_options <- "table"
+    } else {
+      bootstrap_options <- bootstrap_options[bootstrap_options != "basic"]
+      bootstrap_options <- paste0("table-", bootstrap_options)
+      bootstrap_options <- c("table", bootstrap_options)
+    }
+    xml_attr(kable_xml, "class") <- paste(c(kable_xml_class, bootstrap_options),
+                                          collapse = " ")
+  }
 
   # Modify style
   kable_xml_style <- NULL
@@ -227,6 +258,11 @@ htmlTable_styling <- function(kable_input,
     if (!is.null(kable_caption_node)) {
       xml_attr(kable_caption_node, "style") <- "font-size: initial !important;"
     }
+  }
+  if (!is.null(html_font)) {
+    kable_xml_style <- c(kable_xml_style, paste0(
+      'font-family: ', html_font, ';'
+    ))
   }
   if (!full_width) {
     kable_xml_style <- c(kable_xml_style, "width: auto !important;")
@@ -283,7 +319,8 @@ pdfTable_styling <- function(kable_input,
                              stripe_color,
                              stripe_index,
                              latex_table_env,
-                             table.envir) {
+                             table.envir,
+                             wraptable_width) {
 
   latex_options <- match.arg(
     latex_options,
@@ -317,6 +354,7 @@ pdfTable_styling <- function(kable_input,
   if ("repeat_header" %in% latex_options & table_info$tabular == "longtable") {
     out <- styling_latex_repeat_header(out, table_info, repeat_header_text,
                                        repeat_header_method, repeat_header_continued)
+    table_info$repeat_header_latex <- TRUE
   }
 
   if (full_width) {
@@ -341,7 +379,7 @@ pdfTable_styling <- function(kable_input,
   }
 
   out <- styling_latex_position(out, table_info, position, latex_options,
-                                table.envir)
+                                table.envir, wraptable_width)
 
   out <- structure(out, format = "latex", class = "knitr_kable")
   attr(out, "kable_meta") <- table_info
@@ -403,7 +441,7 @@ styling_latex_scale_down <- function(x, table_info) {
 styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
                                         repeat_header_method,
                                         repeat_header_continued) {
-  x <- read_lines(x)
+  x <- str_split(x, "\n")[[1]]
   if (table_info$booktabs) {
     header_rows_start <- which(x == "\\toprule")[1]
     if (is.null(table_info$colnames)) {
@@ -437,7 +475,7 @@ styling_latex_repeat_header <- function(x, table_info, repeat_header_text,
     x[index_bottomrule - 1] <- paste0(x[index_bottomrule - 1], "*")
 
     if (repeat_header_continued == FALSE) {
-      bottom_part <- "\\\n\\endfoot\n\\bottomrule\n\\endlastfoot"
+      bottom_part <- "\n\\endfoot\n\\bottomrule\n\\endlastfoot"
     } else {
       if (repeat_header_continued == TRUE) {
         bottom_text <- "\\textit{(continued \\ldots)}"
@@ -484,7 +522,7 @@ styling_latex_full_width <- function(x, table_info) {
 }
 
 styling_latex_position <- function(x, table_info, position, latex_options,
-                                   table.envir) {
+                                   table.envir, wraptable_position) {
   hold_position <- intersect(c("hold_position", "HOLD_position"), latex_options)
   if (length(hold_position) == 0) hold_position <- ""
   switch(
@@ -494,8 +532,10 @@ styling_latex_position <- function(x, table_info, position, latex_options,
     left = styling_latex_position_left(x, table_info),
     right = styling_latex_position_right(x, table_info, hold_position,
                                          table.envir),
-    float_left = styling_latex_position_float(x, table_info, "l", table.envir),
-    float_right = styling_latex_position_float(x, table_info, "r", table.envir)
+    float_left = styling_latex_position_float(x, table_info, "l", table.envir,
+                                              wraptable_position),
+    float_right = styling_latex_position_float(x, table_info, "r", table.envir,
+                                               wraptable_position)
   )
 }
 
@@ -527,7 +567,8 @@ styling_latex_position_right <- function(x, table_info, hold_position,
   styling_latex_position_center(x, table_info, hold_position, table.envir)
 }
 
-styling_latex_position_float <- function(x, table_info, option, table.envir) {
+styling_latex_position_float <- function(x, table_info, option, table.envir,
+                                         wraptable_width) {
   if (table_info$tabular == "longtable") {
     warning("wraptable is not supported for longtable.")
     if (option == "l") return(styling_latex_position_left(x, table_info))
@@ -538,7 +579,7 @@ styling_latex_position_float <- function(x, table_info, option, table.envir) {
   col_max_length <- apply(size_matrix, 1, max) + 4
   if (table_info$table_env) {
     option <- sprintf("\\\\begin\\{wraptable\\}\\{%s\\}", option)
-    option <- paste0(option, "\\{0pt\\}")
+    option <- paste0(option, "\\{", wraptable_width, "\\}")
     x <- sub("\\\\begin\\{table\\}\\[\\!h\\]", "\\\\begin\\{table\\}", x)
     x <- sub("\\\\begin\\{table\\}", option, x)
     x <- sub("\\\\end\\{table\\}", "\\\\end\\{wraptable\\}", x)

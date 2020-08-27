@@ -1,7 +1,7 @@
 #' kableExtra
 #'
 #' @description When we are talking about table generators in R,
-#' [knitr](https://yihui.name/knitr/)'s `kable()` function wins lots of flavor
+#' [knitr](https://yihui.org/knitr/)'s `kable()` function wins lots of flavor
 #' by its ultimate simplicity. Unlike those powerful table rendering engines
 #' such as [`xtable`](https://CRAN.R-project.org/package=xtable), the philosophy
 #' behind [`knitr::kable()`](https://rdrr.io/cran/knitr/man/kable.html) is to
@@ -28,13 +28,13 @@
 #' `kableExtra` cannot solve the problem
 #'
 #' For a full package documentation, please visit the
-#' [package documentation site](http://haozhu233.github.io/kableExtra/)
+#' [package documentation site](https://haozhu233.github.io/kableExtra/)
 #' for more information
 #'
 #' @section Features:
 #' **Pipable syntax:** `kableExtra` is NOT a table generating package. It is a
 #' package that can "add features" to a `kable` output using a syntax
-#' that every useR loves - the [pipe](http://r4ds.had.co.nz/pipes.html).
+#' that every useR loves - the [pipe](https://r4ds.had.co.nz/pipes.html).
 #' We see similar approaches to deal with plots in packages like `ggvis` and
 #' `plotly`. There is no reason why we cannot use it with tables.
 #'
@@ -59,23 +59,23 @@
 #' str_extract str_replace_all str_trim str_extract_all str_sub str_replace
 #' @importFrom xml2 read_xml xml_attr xml_has_attr xml_attr<- read_html
 #' xml_child xml_children xml_name xml_add_sibling xml_add_child xml_text
-#' xml_remove write_xml xml_text<-
+#' xml_remove write_xml xml_text<- xml_length
 #' @importFrom rvest html_table
 #' @importFrom knitr knit_meta_add include_graphics knit_print asis_output kable
 #' @importFrom rmarkdown latex_dependency html_dependency_bootstrap
 #' html_dependency_jquery pandoc_self_contained_html
 #' @importFrom magrittr %>%
 #' @importFrom utils read.csv head capture.output
-#' @importFrom readr read_lines read_file
 #' @importFrom scales rescale
 #' @importFrom viridisLite viridis
-#' @importFrom stats ave
-#' @importFrom grDevices col2rgb
+#' @importFrom stats ave density median
+#' @importFrom grDevices col2rgb svg png
 #' @importFrom rstudioapi isAvailable viewer
 #' @importFrom glue glue
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom webshot webshot
 #' @importFrom digest digest
+#' @importFrom graphics par text hist boxplot
 #' @import htmltools
 #' @name kableExtra-package
 #' @aliases kableExtra

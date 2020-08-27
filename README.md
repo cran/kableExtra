@@ -7,7 +7,7 @@
 
 ***
 
-When we are talking about table generators in R, [knitr](https://yihui.name/knitr/)'s `kable()` function is usually a popular choice because of its ultimate simplicity. Unlike those powerful table rendering engines such as [`xtable`](https://CRAN.R-project.org/package=xtable), the philosophy behind [`knitr::kable()`](https://rdrr.io/cran/knitr/man/kable.html) is to make it easy for programmers to use. Just as it claimed in its function description,
+When we are talking about table generators in R, [knitr](https://yihui.org/knitr/)'s `kable()` function is usually a popular choice because of its ultimate simplicity. Unlike those powerful table rendering engines such as [`xtable`](https://CRAN.R-project.org/package=xtable), the philosophy behind [`knitr::kable()`](https://rdrr.io/cran/knitr/man/kable.html) is to make it easy for programmers to use. Just as it claimed in its function description,
 
 > This is a very simple table generator. It is simple by design. It is not intended to replace any other R packages for making tables. - Yihui
 
@@ -27,10 +27,10 @@ This package can load required LaTeX package automatically in vanilla rmarkdown.
 
 ## Features
 ### Pipable syntax
-`kableExtra` is NOT a table generating package. It is a package that can **"add features"** to a `kable()` output using a syntax that every useR loves - the [pipes `%>%`](http://r4ds.had.co.nz/pipes.html). We see similar approaches to deal with plots in packages like `ggvis` and `plotly`. There is no reason why we cannot use it with tables.
+`kableExtra` is NOT a table generating package. It is a package that can **"add features"** to a `kable()` output using a syntax that every useR loves - the [pipes `%>%`](https://r4ds.had.co.nz/pipes.html). We see similar approaches to deal with plots in packages like `ggvis` and `plotly`. There is no reason why we cannot use it with tables.
 
 ### Unified functions for both HTML and PDF
-Most functionalities in `kableExtra` can work in both HTML and PDF. In fact, as long as you specifies format in `kable()` (which can be set globally through option `knitr.table.format`), functions in this package will pick the right way to manipulate the table be themselves. As a result, if users want to left align the table, `kable(...) %>% kable_styling(position = "left")` will work in both HTML and PDF.
+Most functionalities in `kableExtra` can work in both HTML and PDF. In fact, as long as you specifies format in `kable()` (which can be set globally through option `knitr.table.format`), functions in this package will pick the right way to manipulate the table be themselves. As a result, if users want to left align the table, `kable(...) %>% kable_styling(position = "left")` will work in both HTML and PDF. Recently, we also introduced a new `kbl()` function acting as an alternative to `kable` but provides better documentation and format detection. 
 
 ## Install
 ```r
@@ -42,23 +42,22 @@ devtools::install_github("haozhu233/kableExtra")
 
 ## Basic Usage
 ```r
-library(knitr)
 library(kableExtra)
 dt <- mtcars[1:5, 1:4]
 
 # HTML table
-kable(dt, format = "html", caption = "Demo Table") %>%
+kbl(dt, caption = "Demo Table") %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = F) %>%
   add_header_above(c(" ", "Group 1" = 2, "Group 2[note]" = 2)) %>%
-  add_footnote(c("table footnote"))
+  footnote(c("table footnote"))
 
 # LaTeX Table
-kable(dt, format = "latex", booktabs = T, caption = "Demo Table") %>%
+kbl(dt, booktabs = T, caption = "Demo Table") %>%
   kable_styling(latex_options = c("striped", "hold_position"),
                 full_width = F) %>%
   add_header_above(c(" ", "Group 1" = 2, "Group 2[note]" = 2)) %>%
-  add_footnote(c("table footnote"))
+  footnote(c("table footnote"))
 
 ```
 ### Results
@@ -73,4 +72,4 @@ For more information, please check the package vignette.
 
 
 ## Acknowledgement
-I would like to thank colleagues at [Hebrew SeniorLife Institute for Aging Research](https://www.instituteforagingresearch.org/) and the [Boston Pepper Center](http://pepper.bwh.harvard.edu/) for their input. I also would like to appreciate the mentorship from Tom Travison ([@tgt75](https://twitter.com/tgt75)) and all the efforts from the open source community, which help this package keep getting better.
+I would like to thank colleagues at Hebrew SeniorLife [Marcus Institute for Aging Research](https://www.marcusinstituteforaging.org/) and the [Boston Pepper Center](https://pepper.bwh.harvard.edu/) for their input. I also would like to appreciate the mentorship from Tom Travison ([@tgt75](https://twitter.com/tgt75)) and all the efforts from the open source community, which help this package keep getting better.

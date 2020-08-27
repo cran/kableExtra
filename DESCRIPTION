@@ -1,7 +1,7 @@
 Package: kableExtra
 Type: Package
 Title: Construct Complex Table with 'kable' and Pipe Syntax
-Version: 1.1.0
+Version: 1.2.1
 Authors@R: c(
     person('Hao', 'Zhu', email = 'haozhu233@gmail.com', role = c('aut', 'cre'),
     comment = c(ORCID = '0000-0002-3386-6076')),
@@ -31,14 +31,15 @@ URL: http://haozhu233.github.io/kableExtra/,
 BugReports: https://github.com/haozhu233/kableExtra/issues
 Depends: R (>= 3.1.0)
 Imports: knitr (>= 1.16), magrittr, stringr (>= 1.0), xml2 (>= 1.1.1),
-        rvest, rmarkdown (>= 1.6.0), readr, scales, viridisLite, stats,
-        grDevices, htmltools, rstudioapi, glue, tools, webshot, digest
-Suggests: testthat, magick, formattable, dplyr
+        rvest, rmarkdown (>= 1.6.0), scales, viridisLite, stats,
+        grDevices, htmltools, rstudioapi, glue, tools, webshot, digest,
+        graphics
+Suggests: testthat, magick, formattable, sparkline
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2019-03-15 23:55:08 UTC; haozhu
+Packaged: 2020-08-27 11:45:51 UTC; haozhu
 Author: Hao Zhu [aut, cre] (<https://orcid.org/0000-0002-3386-6076>),
   Thomas Travison [ctb],
   Timothy Tsai [ctb],
@@ -54,4 +55,4 @@ Author: Hao Zhu [aut, cre] (<https://orcid.org/0000-0002-3386-6076>),
   Duncan Murdoch [ctb]
 Maintainer: Hao Zhu <haozhu233@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-03-16 20:10:03 UTC
+Date/Publication: 2020-08-27 19:40:11 UTC
