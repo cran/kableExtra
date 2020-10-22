@@ -115,7 +115,7 @@ column_spec_html <- function(kable_input, column, width,
                              extra_css, include_thead,
                              link, new_tab, tooltip, popover, image) {
   kable_attrs <- attributes(kable_input)
-  kable_xml <- read_kable_as_xml(kable_input)
+  kable_xml <- kable_as_xml(kable_input)
   kable_tbody <- xml_tpart(kable_xml, "tbody")
 
   group_header_rows <- attr(kable_input, "group_header_rows")
@@ -139,6 +139,22 @@ column_spec_html <- function(kable_input, column, width,
   }
 
   if (include_thead) {
+    nrows <- length(all_contents_rows) + 1
+    off <- 1
+
+    bold <- ensure_len_html(bold, nrows, "bold")
+    italic <- ensure_len_html(italic, nrows, "italic")
+    monospace <- ensure_len_html(monospace, nrows, "monospace")
+    underline <- ensure_len_html(underline, nrows, "underline")
+    strikeout <- ensure_len_html(strikeout, nrows, "strikeout")
+    color <- ensure_len_html(color, nrows, "color")
+    background <- ensure_len_html(background, nrows,"background")
+    link <- ensure_len_html(link, nrows, "link")
+    new_tab <- ensure_len_html(new_tab, nrows, "new_tab")
+    tooltip <- ensure_len_html(tooltip, nrows, "tooltip")
+    popover <- ensure_len_html(popover, nrows, "popover")
+    image <- ensure_len_html(image, nrows, "image")
+
     kable_thead <- xml_tpart(kable_xml, "thead")
     nrow_thead <- length(xml_children(kable_thead))
     for (j in column) {
@@ -148,37 +164,39 @@ column_spec_html <- function(kable_input, column, width,
         bold[1], italic[1], monospace[1], underline[1], strikeout[1],
         color[1], background[1], border_left, border_right,
         border_l_css, border_r_css,
-        extra_css[1], link[1], new_tab[1], tooltip[1], popover[1]
+        extra_css,
+        link[1], new_tab[1], tooltip[1], popover[1], image[1]
       )
     }
+  } else {
+    nrows <- length(all_contents_rows)
+    off <- 0
+
+    bold <- ensure_len_html(bold, nrows, "bold")
+    italic <- ensure_len_html(italic, nrows, "italic")
+    monospace <- ensure_len_html(monospace, nrows, "monospace")
+    underline <- ensure_len_html(underline, nrows, "underline")
+    strikeout <- ensure_len_html(strikeout, nrows, "strikeout")
+    color <- ensure_len_html(color, nrows, "color")
+    background <- ensure_len_html(background, nrows,"background")
+    link <- ensure_len_html(link, nrows, "link")
+    new_tab <- ensure_len_html(new_tab, nrows, "new_tab")
+    tooltip <- ensure_len_html(tooltip, nrows, "tooltip")
+    popover <- ensure_len_html(popover, nrows, "popover")
+    image <- ensure_len_html(image, nrows, "image")
   }
 
-  nrows <- length(all_contents_rows)
-  off <- 0
-
-  bold <- ensure_len_html(bold, nrows, "bold")
-  italic <- ensure_len_html(italic, nrows, "italic")
-  monospace <- ensure_len_html(monospace, nrows, "monospace")
-  underline <- ensure_len_html(underline, nrows, "underline")
-  strikeout <- ensure_len_html(strikeout, nrows, "strikeout")
-  color <- ensure_len_html(color, nrows, "color")
-  background <- ensure_len_html(background, nrows,"background")
-  link <- ensure_len_html(link, nrows, "link")
-  new_tab <- ensure_len_html(new_tab, nrows, "new_tab")
-  tooltip <- ensure_len_html(tooltip, nrows, "tooltip")
-  popover <- ensure_len_html(popover, nrows, "popover")
-  image <- ensure_len_html(image, nrows, "image")
-
-  for (i in all_contents_rows) {
+  for (i in seq(length(all_contents_rows))) {
     for (j in column) {
-      target_cell <- xml_child(xml_child(kable_tbody, i), j)
+      io <- i + off
+      target_cell <- xml_child(xml_child(kable_tbody, all_contents_rows[io]), j)
       column_spec_html_cell(
         target_cell, width, width_min, width_max,
-        bold[i], italic[i], monospace[i], underline[i], strikeout[i],
-        color[i], background[i], border_left, border_right,
+        bold[io], italic[io], monospace[io], underline[io], strikeout[io],
+        color[io], background[io], border_left, border_right,
         border_l_css, border_r_css,
         extra_css,
-        link[i], new_tab[i], tooltip[i], popover[i], image[i]
+        link[io], new_tab[io], tooltip[io], popover[io], image[io]
       )
     }
   }
@@ -264,9 +282,9 @@ column_spec_html_cell <- function(target_cell, width, width_min, width_max,
                                              extra_css)
   }
 
-  if (!is.null(image)) {
+  if (!is.null(image) && (length(image) > 1 || !is.null(image[[1]]))) {
     image <- image[[1]]
-    if (class(image) == "kableExtraInlinePlots") {
+    if (inherits(image, "kableExtraInlinePlots")) {
       if (!is.null(image$svg_text)) {
         xml_add_child(target_cell, xml2::read_xml(image$svg_text))
       } else {
@@ -284,13 +302,13 @@ column_spec_html_cell <- function(target_cell, width, width_min, width_max,
 
   # favor popover over tooltip
   if (!is.null(popover)) {
-    if (class(popover) != "ke_popover") popover <- spec_popover(popover)
+    if (!inherits(popover, "ke_popover")) popover <- spec_popover(popover)
     popover_list <- attr(popover, 'list')
     for (p in names(popover_list)) {
       xml_attr(target_cell, p) <- popover_list[p]
     }
   } else if (!is.null(tooltip)) {
-    if (class(tooltip) != "ke_tooltip") tooltip <- spec_tooltip(tooltip)
+    if (!inherits(tooltip, "ke_tooltip")) tooltip <- spec_tooltip(tooltip)
     tooltip_list <- attr(tooltip, 'list')
     for (t in names(tooltip_list)) {
       xml_attr(target_cell, t) <- tooltip_list[t]
@@ -539,9 +557,9 @@ latex_cell_builder <- function(target_row, column, table_info,
                               new_row[column], "\\}")
   }
 
-  if (!is.null(image)) {
+  if (!is.null(image) && (length(image) > 1 || !is.null(image[[1]]))) {
     image <- image[[1]]
-    if (class(image) == "kableExtraInlinePlots") {
+    if (inherits(image, "kableExtraInlinePlots")) {
       new_row[column] <- paste0(
         new_row[column],
         '\\\\includegraphics\\[width=',

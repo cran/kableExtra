@@ -34,12 +34,41 @@ save_kable <- function(x, file,
                        extra_dependencies = NULL, ...,
                        latex_header_includes = NULL, keep_tex = FALSE,
                        density = 300) {
-  if (!is.null(attr(x, "format")) && attr(x, "format") == "latex") {
-    return(save_kable_latex(x, file, latex_header_includes, keep_tex, density))
+
+  if (!is.null(attr(x, "format"))) {
+
+    # latex
+    if (attr(x, "format") == "latex") {
+      return(save_kable_latex(x, file, latex_header_includes, keep_tex, density))
+
+      # markdown
+    } else if (attr(x, "format") == "pipe") {
+
+      # good file extension: write to file
+      if (tools::file_ext(file) %in% c("txt", "md", "markdown", "Rmd")) {
+        return(save_kable_markdown(x, file))
+
+        # bad file extension: warning + keep going to html writer
+      } else {
+        warning('`save_kable` can only save markdown tables to files with the following extensions: .txt, .md, .markdown, .Rmd. Since the supplied file name has a different extension, `save_kable` will try to use the HTML writer. This is likely to produce suboptimal results. To save images or other file formats, try supplying a LaTeX or HTML table to `save_kable`.')
+      }
+
+    }
+
   }
+
+  # html
   return(save_kable_html(x, file, bs_theme, self_contained,
                          extra_dependencies, density, ...))
 }
+
+
+save_kable_markdown <- function(x, file, ...) {
+  out <- paste(x, collapse="\n")
+  writeLines(text=out, con=file)
+  return(invisible(file))
+}
+
 
 save_kable_html <- function(x, file, bs_theme, self_contained,
                             extra_dependencies, density, ...) {
@@ -60,16 +89,21 @@ save_kable_html <- function(x, file, bs_theme, self_contained,
 
   # Check if we are generating an image and use webshot to do that
   if (tools::file_ext(file) %in% c("png", "jpg", "jpeg", "pdf")) {
-    file_temp_html <- tempfile(pattern = tools::file_path_sans_ext(file), tmpdir = '.', fileext = ".html")
-
+    file_temp_html <- tempfile(
+      pattern = tools::file_path_sans_ext(basename(file)),
+      fileext = ".html")
     file.create(file_temp_html)
     file_temp_html <- normalizePath(file_temp_html)
+
     file.create(file)
     file <- normalizePath(file)
 
     # Generate a random temp lib directory. The sub is to remove any back or forward slash at the beginning of the temp_dir
-    temp_dir <- sub(pattern = '^[\\\\/]{1,2}', replacement = '', tempfile(pattern = 'lib', tmpdir = '' , fileext = ''))
-    htmltools::save_html(html_result, file = file_temp_html, libdir = temp_dir)
+    temp_dir <- sub(pattern = '^[\\\\/]{1,2}',
+                    replacement = '',
+                    tempfile(pattern = 'lib', tmpdir = '' , fileext = ''))
+    save_HTML(html_result, file = file_temp_html, libdir = temp_dir,
+              self_contained = FALSE)
 
     result <- webshot::webshot(file_temp_html, file, ...)
     if (is.null(result)) {
@@ -102,19 +136,75 @@ save_kable_html <- function(x, file, bs_theme, self_contained,
 
     if (self_contained) {
       # Generate a random temp lib directory. The sub is to remove any back or forward slash at the beginning of the temp_dir
-      temp_dir <- sub(pattern = '^[\\\\/]{1,2}', replacement = '', tempfile(pattern = 'lib', tmpdir = '' , fileext = ''))
-      htmltools::save_html(html_result, file = file, libdir = temp_dir)
+      temp_dir <- sub(pattern = '^[\\\\/]{1,2}',
+                      replacement = '',
+                      tempfile(pattern = 'lib', tmpdir = '' , fileext = ''))
+      save_HTML(html_result, file = file, libdir = temp_dir,
+                self_contained = TRUE)
       #remove_html_doc(file)
-      rmarkdown::pandoc_self_contained_html(file, file)
+      self_contained(file, file)
       unlink(file.path(dirname(file), temp_dir), recursive = TRUE)
     } else {
-      # Simply use the htmltools::save_html to write out the files. Dependencies go to the standard lib folder
-      htmltools::save_html(html_result, file = file)
+      # Simply use the htmltools::save_html to write out the files.
+      # Dependencies go to the standard lib folder
+      save_HTML(html_result, file = file, self_contained = FALSE)
     }
   }
 
   return(invisible(file))
 }
+
+# Local version of htmltools::save_html with fix to relative path.
+# See https://github.com/rstudio/htmltools/pull/105
+save_HTML <- function(html, file, libdir = "lib", self_contained = TRUE) {
+  base_file <- basename(file)
+  dir <- dirname(file)
+  file <- file.path(dir, base_file)
+  oldwd <- setwd(dir)
+  on.exit(setwd(oldwd), add = TRUE)
+  rendered <- htmltools::renderTags(html)
+  deps <- lapply(rendered$dependencies, function(dep) {
+    dep <- htmltools::copyDependencyToDir(dep, libdir, FALSE)
+    dep <- htmltools::makeDependencyRelative(dep, dir, FALSE)
+    dep
+  })
+  html <- c(
+    if (self_contained) "" else "<!DOCTYPE html>",
+    "<html>", "<head>",
+    "<meta charset=\"utf-8\"/>",
+    "<title>table output</title>",
+    htmltools::renderDependencies(deps, c("href", "file")),
+    rendered$head, "</head>", "<body>",
+    rendered$html, "</body>", "</html>")
+  writeLines(html, file, useBytes = TRUE)
+}
+
+# Local version of rmarkdown::pandoc_self_contained_html(input, output) to
+# remove the no title bug
+self_contained <- function(input, output) {
+  input <- normalizePath(input)
+  if (!file.exists(output))
+    file.create(output)
+  output <- normalizePath(output)
+  template <- tempfile(fileext = ".html")
+  on.exit(unlink(template), add = TRUE)
+  write_utf8("$body$", template)
+  from <- if (rmarkdown::pandoc_available("1.17")) "markdown_strict" else "markdown"
+  rmarkdown::pandoc_convert(
+    input = input, from = from, output = output,
+    options = c("--metadata", 'pagetitle="table output"', "--self-contained",
+                "--template", template))
+  invisible(output)
+}
+
+# Local version of rmarkdown:::write_utf8
+write_utf8 <- function (text, con, ...) {
+  opts <- options(encoding = "native.enc")
+  on.exit(options(opts), add = TRUE)
+  writeLines(enc2utf8(text), con, ..., useBytes = TRUE)
+}
+
+
 
 remove_html_doc <- function(x){
   out <- paste(readLines(x)[-1], collapse = "\n")
@@ -167,7 +257,7 @@ save_kable_latex <- function(x, file, latex_header_includes, keep_tex, density) 
     table_img_pdf <- try(
       magick::image_read(paste0(file_no_ext, ".pdf"),
                          density = density), silent = T)
-    if (class(table_img_pdf) == "try-error") {
+    if (inherits(table_img_pdf, "try-error")) {
       stop("We hit an error when trying to use magick to read the generated ",
            "PDF file. You may check your magick installation and try to ",
            "use magick::image_read to read the PDF file manually. It's also ",

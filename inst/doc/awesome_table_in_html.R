@@ -121,12 +121,41 @@ tbl_img %>%
 
 ## -----------------------------------------------------------------------------
 mpg_list <- split(mtcars$mpg, mtcars$cyl)
-inline_plot <- data.frame(cyl = c(4, 6, 8), mpg_box = "", mpg_hist = "")
-inline_plot %>% 
-  kbl(booktabs = T) %>%
-  kable_paper(full_width = F) %>%
+disp_list <- split(mtcars$disp, mtcars$cyl)
+inline_plot <- data.frame(cyl = c(4, 6, 8), mpg_box = "", mpg_hist = "",
+                          mpg_line1 = "", mpg_line2 = "",
+                          mpg_points1 = "", mpg_points2 = "", mpg_poly = "")
+inline_plot %>%
+  kbl(booktabs = TRUE) %>%
+  kable_paper(full_width = FALSE) %>%
   column_spec(2, image = spec_boxplot(mpg_list)) %>%
-  column_spec(3, image = spec_hist(mpg_list))
+  column_spec(3, image = spec_hist(mpg_list)) %>%
+  column_spec(4, image = spec_plot(mpg_list, same_lim = TRUE)) %>%
+  column_spec(5, image = spec_plot(mpg_list, same_lim = FALSE)) %>%
+  column_spec(6, image = spec_plot(mpg_list, type = "p")) %>%
+  column_spec(7, image = spec_plot(mpg_list, disp_list, type = "p")) %>%
+  column_spec(8, image = spec_plot(mpg_list, polymin = 5))
+
+## -----------------------------------------------------------------------------
+coef_table <- data.frame(
+  Variables = c("var 1", "var 2", "var 3"),
+  Coefficients = c(1.6, 0.2, -2.0),
+  Conf.Lower = c(1.3, -0.4, -2.5),
+  Conf.Higher = c(1.9, 0.6, -1.4)
+) 
+
+data.frame(
+  Variable = coef_table$Variables,
+  Visualization = ""
+) %>%
+  kbl(booktabs = T) %>%
+  kable_classic(full_width = FALSE) %>%
+  column_spec(2, image = spec_pointrange(
+    x = coef_table$Coefficients, 
+    xmin = coef_table$Conf.Lower, 
+    xmax = coef_table$Conf.Higher, 
+    vline = 0)
+    )
 
 ## -----------------------------------------------------------------------------
 kbl(dt) %>%
