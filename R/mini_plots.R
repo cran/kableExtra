@@ -121,7 +121,7 @@ spec_hist <- function(x, width = 200, height = 50, res = 300,
 #' @param file_type Graphic device. Can be character (e.g., `"pdf"`)
 #'   or a graphics device function (`grDevices::pdf`). This defaults
 #'   to `"pdf"` if the rendering is in LaTeX and `"svg"` otherwise.
-#' @param ... extraparameters passing to boxplot
+#' @param ... extra parameters passing to boxplot
 #'
 #' @export
 spec_boxplot <- function(x, width = 200, height = 50, res = 300,
@@ -236,13 +236,13 @@ rmd_files_dir <- function(create = TRUE) {
 #' argument defaults to use this value for `cex` for points. Default is 2.
 #' @param pch,cex Shape and size for points (if type is other than "l").
 #' @param type Passed to `plot`, often one of "l", "p", or "b", see
-#' [graphics::plot.default()] for more details. Ignored when 'polymin' is
-#' not 'NA'.
+#' [graphics::plot.default()] for more details. Ignored when `polymin` is
+#' not `NA`.
 #' @param polymin Special argument that converts a "line" to a polygon,
 #' where the flat portion is this value, and the other side of the polygon
-#' is the 'y' value ('x' if no 'y' provided). If 'NA' (the default), then
+#' is the 'y' value ('x' if no 'y' provided). If `NA` (the default), then
 #' this is ignored; otherwise if this is numeric then a polygon is
-#' created (and 'type' is ignored). Note that if 'polymin' is in the middle
+#' created (and 'type' is ignored). Note that if `polymin` is in the middle
 #' of the 'y' values, it will generate up/down polygons around this value.
 #' @param minmax,min,max Arguments passed to `points` to highlight minimum
 #' and maximum values in `spec_plot`. If `min` or `max` are `NULL`, they
@@ -393,7 +393,7 @@ spec_plot <- function(x, y = NULL, width = 200, height = 50, res = 300,
 #' the file.
 #'
 #' @param x,xmin,xmax A scalar value or List of scalar values for dot, left
-#' and right errorbar.
+#' and right error bar.
 #' @param vline A scalar value for where to draw a vertical line.
 #' @param width The width of the plot in pixel
 #' @param height The height of the plot in pixel
@@ -405,7 +405,8 @@ spec_plot <- function(x, y = NULL, width = 200, height = 50, res = 300,
 #' @param xaxt On/Off for xaxis text
 #' @param yaxt On/Off for yaxis text
 #' @param ann On/Off for annotations (titles and axis titles)
-#' @param col Color for the fill of the histogram bar/boxplot box.
+#' @param col Color for mean dot.
+#' @param line_col Color for the line and the error bar.
 #' @param cex size of the mean dot and error bar size.
 #' @param frame.plot T/F for whether to plot the plot frames.
 #' @param dir Directory of where the images will be saved.
@@ -422,7 +423,7 @@ spec_pointrange <- function(
   width = 200, height = 50, res = 300,
   same_lim = TRUE, lim = NULL,
   xaxt = 'n', yaxt = 'n', ann = FALSE,
-  col = "red", cex = 0.3, frame.plot = FALSE,
+  col = "red", line_col = "black", cex = 0.3, frame.plot = FALSE,
   dir = if (is_latex()) rmd_files_dir() else tempdir(),
   file = NULL,
   file_type = if (is_latex()) "pdf" else svglite::svglite, ...) {
@@ -436,7 +437,7 @@ spec_pointrange <- function(
     dots <- listify_args(
       x = as.list(x), xmin = as.list(xmin), xmax = as.list(xmax), vline,
       width, height, res,
-      lim, xaxt, yaxt, ann, col, cex, frame.plot,
+      lim, xaxt, yaxt, ann, col, line_col, cex, frame.plot,
       dir, file, file_type,
       lengths = c(1, length(x)),
       passthru = c("x", "xmin", "xmax"))
@@ -473,7 +474,8 @@ spec_pointrange <- function(
 
   graphics::plot(x, 0, type = "p", pch = ".",
                  xlim = lim, frame.plot = frame.plot)
-  graphics::arrows(xmin, 0, xmax, 0, cex / 15, angle = 90, code = 3)
+  graphics::arrows(xmin, 0, xmax, 0, cex / 15, angle = 90, code = 3,
+                   col = line_col)
   graphics::points(x, 0, col = col, type = "p", pch = 15, cex = cex)
   if (!is.null(vline)) {
     graphics::abline(v = vline, lty = 3)

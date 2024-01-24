@@ -4,13 +4,15 @@
 \alias{header_separate}
 \title{Separate table headers and add additional header rows based on grouping}
 \usage{
-header_separate(kable_input, sep = "[^[:alnum:]]+")
+header_separate(kable_input, sep = "[^[:alnum:]]+", ...)
 }
 \arguments{
 \item{kable_input}{Output of \code{knitr::kable()} with \code{format} specified}
 
 \item{sep}{A regular expression separator between groups. The default value
 is a regular expression that matches any sequence of non-alphanumeric values.}
+
+\item{...}{Additional parameters passed to do.call.}
 }
 \description{
 When you create a summary table for either model or basic

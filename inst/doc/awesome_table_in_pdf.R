@@ -1,4 +1,4 @@
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 options(kableExtra.latex.load_packages = F)
 
 ## -----------------------------------------------------------------------------
@@ -11,7 +11,7 @@ dt <- mtcars[1:5, 1:6]
 ## If you don't define format here, you'll need put `format = "latex"` 
 ## in every kable function.
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # Not evaluated. Illustration purpose
 #  options(kableExtra.latex.load_packages = FALSE)
 #  library(kableExtra)
@@ -44,6 +44,10 @@ kbl(cbind(dt, dt, dt), booktabs = T) %>%
 ## -----------------------------------------------------------------------------
 kbl(cbind(dt), booktabs = T) %>%
   kable_styling(latex_options = c("striped", "scale_down"))
+
+## -----------------------------------------------------------------------------
+kbl(cbind(dt), booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "scale_up"))
 
 ## -----------------------------------------------------------------------------
 long_dt <- rbind(mtcars, mtcars) 
@@ -164,7 +168,7 @@ kbl(dt, booktabs = T, align = "c") %>%
   kable_styling(latex_options = "striped", full_width = F) %>%
   row_spec(0, angle = 45)
 
-## ---- message=FALSE, warning=FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE---------------------------------------------
 cs_dt <- mtcars[1:10, 1:2]
 cs_dt$car = row.names(cs_dt)
 row.names(cs_dt) <- NULL
@@ -250,13 +254,13 @@ kbl(mtcars[1:10, 1:6], caption = "Group Rows", booktabs = T) %>%
 kbl(dt, booktabs = T) %>%
   pack_rows("Group 1", 4, 5, latex_gap_space = "2em")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  kbl(mtcars[1:10, 1:6], caption = "Group Rows", booktabs = T) %>%
 #    kable_styling() %>%
 #    pack_rows(index=c(" " = 3, "Group 1" = 4, "Group 2" = 3))
 #  # Not evaluated. The code above should have the same result as the first example in this section.
 
-## ---- eval=F------------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  kbl(mtcars[1:2, 1:2], align = c("cl"))
 #  # \begin{tabular}{l|cl|cl}  # Note the column alignment here
 #  # \hline
@@ -278,7 +282,7 @@ collapse_rows_dt <- data.frame(C1 = c(rep("a", 10), rep("b", 5)),
                  C4 = sample(c(0,1), 15, replace = TRUE))
 kbl(collapse_rows_dt, booktabs = T, align = "c") %>%
   column_spec(1, bold=T) %>%
-  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")
+  collapse_rows(columns = 1:2, latex_hline = "major", row_group_label_position = "first")
 
 ## -----------------------------------------------------------------------------
 kbl(collapse_rows_dt[-1], align = "c", booktabs = T) %>%
@@ -379,7 +383,7 @@ kbl(dt, caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
   pack_rows("Group 1", 4, 5) %>%
   landscape()
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # not evaluated
 #  k <- mtcars[1:10,1:5]
 #  names(k) <- paste("{", names(k), "}")
@@ -388,10 +392,10 @@ kbl(dt, caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
 #       align = c("l", rep("d", 4)), linesep = "", escape = FALSE) %>%
 #    kable_styling(full_width=FALSE)
 
-## ---- eval = F----------------------------------------------------------------
+## ----eval = F-----------------------------------------------------------------
 #  # Not evaluated.
 #  
-#  # The code below will automatically include the image in the rmarkdown document
+#  # The code below will automatically include the image in the R Markdown document
 #  kbl(dt, booktabs = T) %>%
 #    column_spec(1, bold = T) %>%
 #    as_image()
@@ -401,7 +405,7 @@ kbl(dt, caption = "Demo Table (Landscape)[note]", booktabs = T) %>%
 #    column_spec(1, bold = T) %>%
 #    save_kable("my_latex_table.png")
 
-## ---- eval=F------------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  # Not evaluating
 #  xtable::xtable(mtcars[1:4, 1:4], caption = "Hello xtable") %>%
 #    xtable2kable() %>%

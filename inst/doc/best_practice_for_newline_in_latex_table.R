@@ -1,4 +1,4 @@
-## ---- warning=F, message=F----------------------------------------------------
+## ----warning=F, message=F-----------------------------------------------------
 library(kableExtra)
 dt <- data.frame(
   Items = c("Item 1", "Item 2", "Item 3"),

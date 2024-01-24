@@ -168,7 +168,7 @@ kbl(dt) %>%
   kable_paper("striped", full_width = F) %>%
   row_spec(0, angle = -45)
 
-## ---- message=FALSE, warning=FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE---------------------------------------------
 cs_dt <- mtcars[1:10, 1:2]
 cs_dt$car = row.names(cs_dt)
 row.names(cs_dt) <- NULL
@@ -248,7 +248,7 @@ popover_dt$`Hover over these items` <- cell_spec(
 kbl(popover_dt, escape = FALSE) %>%
   kable_paper("striped", full_width = FALSE)
 
-## ---- message = FALSE, warning=FALSE------------------------------------------
+## ----message = FALSE, warning=FALSE-------------------------------------------
 library(formattable)
 ft_dt <- mtcars[1:5, 1:4]
 ft_dt$car <- row.names(ft_dt)
@@ -287,7 +287,7 @@ kbl(mtcars[1:10, 1:6], caption = "Group Rows") %>%
   pack_rows("Group 1", 4, 7) %>%
   pack_rows("Group 2", 8, 10)
 
-## ---- eval = F----------------------------------------------------------------
+## ----eval = F-----------------------------------------------------------------
 #  # Not evaluated. This example generates the same table as above.
 #  kbl(mtcars[1:10, 1:6], caption = "Group Rows") %>%
 #    kable_paper("striped", full_width = F) %>%
@@ -298,7 +298,7 @@ kbl(dt) %>%
   kable_paper("striped", full_width = F) %>%
   pack_rows("Group 1", 3, 5, label_row_css = "background-color: #666; color: #fff;")
 
-## ---- eval=F------------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  # Method 1
 #  pack_rows() # instead of group_rows()
 #  
@@ -371,7 +371,7 @@ kbl(cbind(mtcars, mtcars)) %>%
   kable_paper() %>%
   scroll_box(width = "100%", height = "200px")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  kbl(mtcars) %>%
 #    kable_paper() %>%
 #    save_kable(file = "table1.html", self_contained = T)
@@ -379,18 +379,18 @@ kbl(cbind(mtcars, mtcars)) %>%
 ## -----------------------------------------------------------------------------
 # Not evaluated
 library(sparkline)
-sparkline(0)
+sparkline::sparkline(0)
 
 ## -----------------------------------------------------------------------------
 spk_dt <- data.frame(
   var = c("mpg", "wt"),
-  sparkline = c(spk_chr(mtcars$mpg), spk_chr(mtcars$wt))
+  sparkline = c(sparkline::spk_chr(mtcars$mpg), sparkline::spk_chr(mtcars$wt))
 )
 
 kbl(spk_dt, escape = F) %>%
   kable_paper(full_width = F)
 
-## ---- eval=F------------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  # Not evaluating
 #  xtable::xtable(mtcars[1:4, 1:4], caption = "Hello xtable") %>%
 #    xtable2kable() %>%
